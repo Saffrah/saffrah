@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CompanyMiddleware;
+use App\Http\Middleware\UserMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')
                 ->prefix('api/auth')
                 ->group(base_path('app/Domains/Auth/Routes/auth.php'));
+
+            Route::middleware('api')
+                ->prefix('api/company')
+                ->group(base_path('app/Domains/Company/Routes/company.php'));
     
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
