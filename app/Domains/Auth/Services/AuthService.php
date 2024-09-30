@@ -38,7 +38,7 @@ class AuthService
         if(Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) { 
             /** @var \App\Models\User $user **/
             $user = auth('sanctum')->user(); 
-            $user['token'] =  $user->createToken('MyApp')->plainTextToken; 
+            $user['token'] =  $user->createToken('User', ['role:user'])->plainTextToken; 
    
             return [
                 'response_code'    => 200,
