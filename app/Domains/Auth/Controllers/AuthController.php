@@ -3,7 +3,6 @@
 namespace App\Domains\Auth\Controllers;
 
 // Requests
-
 use App\Domains\Auth\Requests\AuthLoginRequest;
 use App\Domains\Auth\Requests\AuthRegisterRequest;
 
@@ -12,6 +11,10 @@ use App\Domains\Auth\Services\AuthService;
 
 // Liberaries
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+// Models
+use App\Models\Company;
 
 class AuthController extends Controller
 {
@@ -42,6 +45,11 @@ class AuthController extends Controller
         $result = $this->auth_service->login($request->validated());
 
         return response()->json($result);
+    }
+
+    public function verify(Request $request)
+    {
+        return Company::where('id', $request->id)->update(['email_verified_at' => now()]) ? 'true' : 'false';
     }
 
 

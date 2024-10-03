@@ -25,6 +25,7 @@ class AuthRegisterRequest extends FormRequest
         return [
             'name'         => 'required|string|max:250',
             'email'        => 'required|email',
+            'user_type'    => 'required|string|in:user,company',
             'phone_number' => 'required|string|min:11',
             'password'     => ['required', 'confirmed', Password::min(8)->numbers()->letters()->mixedCase()->symbols()] 
         ];
