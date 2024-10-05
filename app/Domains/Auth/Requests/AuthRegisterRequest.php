@@ -2,6 +2,8 @@
 
 namespace App\Domains\Auth\Requests;
 
+use App\Domains\Auth\Rules\EmailUniqueRule;
+use App\Domains\Auth\Rules\PhoneNumberUniqueRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -23,11 +25,13 @@ class AuthRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'         => 'required|string|max:250',
-            'email'        => 'required|email',
-            'user_type'    => 'required|string|in:user,company',
-            'phone_number' => 'required|string|min:11',
-            'password'     => ['required', 'confirmed', Password::min(8)->numbers()->letters()->mixedCase()->symbols()] 
+            'name'              => 'required|string|max:250',
+            'email'             => ['required', 'email', new EmailUniqueRule],
+            'user_type'         => 'required|string|in:user,company',
+            'commercial_number' => 'required_if:user_type,company',
+            'tax_number'        => 'required_if:user_type,company',
+            'phone_number'      => ['required', 'string', 'min:11', new PhoneNumberUniqueRule],
+            'password'          => ['required', 'confirmed', Password::min(8)->numbers()->letters()->mixedCase()->symbols()] 
         ];
     }
 }

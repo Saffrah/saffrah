@@ -18,6 +18,10 @@ class UserMiddleware
         if (auth()->user()->tokenCan('role:user')) {
             return $next($request);
         }
-        return response()->json('Not Authorized', 401);
+        return response()->json([
+            'response_code'    => 401, 
+            'response_message' => 'This user type is Not Authorized for this action',
+            'response_data'    => NULL
+        ], 401);
     }
 }
