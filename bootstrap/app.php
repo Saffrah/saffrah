@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')
                 ->prefix('api/file_manager')
                 ->group(base_path('app/Domains/FileManager/Routes/file.php'));
+
+            Route::middleware('api')
+                ->prefix('api/packages')
+                ->group(base_path('app/Domains/Packages/Routes/package.php'));
     
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));

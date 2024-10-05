@@ -19,19 +19,13 @@ class FileManagerRepository
     }
 
     /** 
-     * すべて取得
-     * @param $company_id
-     * @param $reportId
+     * All Registration Files
      * 
      * @return Collection
      * */
-    public function getAll($company_id, $reportId = null)
+    public function getAllRegistrationFiles($company_id)
     {
-        $query = $this->model->where('company_id', $company_id);
-        if ($reportId) {
-            $query->where('report_id', $reportId);
-        }
-        return $query->get();
+        return $this->model->where('company_id', $company_id)->whereNull('package_id')->get();
     }
 
     public function getWithSpecs($company_id, $report_id, $referrer_id = null, $specs = [])

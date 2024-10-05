@@ -5,7 +5,7 @@ namespace App\Domains\Auth\Services;
 // Repositories
 use App\Domains\Auth\Repositories\AuthRepository;
 use App\Domains\Company\Repositories\CompanyRepository;
-
+use App\Domains\FileManager\Repositories\FileManagerRepository;
 // Models
 use App\Models\Company;
 use App\Models\User;
@@ -18,11 +18,17 @@ class AuthService
 {
     private $auth_repository;
     private $company_repository;
+    private $file_manager_repository;
 
-    public function __construct(AuthRepository $auth_repository, CompanyRepository $company_repository) 
+    public function __construct(
+        AuthRepository $auth_repository, 
+        CompanyRepository $company_repository,
+        FileManagerRepository $file_manager_repository
+    ) 
     {
-        $this->auth_repository = $auth_repository;
-        $this->company_repository = $company_repository;
+        $this->auth_repository         = $auth_repository;
+        $this->company_repository      = $company_repository;
+        $this->file_manager_repository = $file_manager_repository;
     }
 
     public function register($request) 
@@ -52,56 +58,65 @@ class AuthService
         ];
     }
 
-    function login($request) 
+    protected function create_credentials($request, $user) 
     {
-        $result  = false;
-        $message = 'LogIn Credentials are not correct !';
-
-        $user = User::where('email', $request['email'])->first();
-
-        if($user) { 
-            /** @var \App\Models\User $user **/
-            $user              = auth('sanctum')->user(); 
-            if(Hash::check($request['password'], $user->password) && $user->email_verified_at != NULL) {
-                $user['token']     =  $user->createToken('User', ['role:user'])->plainTextToken; 
-                $user['user_type'] = 'User';
-                $result = true;
+        if(Hash::check($request['password'], $user->password)) {
+            $type = $user instanceof User ? 'user' : 'company';
+            $user->tokens()->delete();
+            $user['token']     = $user->createToken($type, ['role:'.$type])->plainTextToken; 
+            $user['user_type'] = $type;
+            if($user->email_verified_at == NULL) {
+                return [
+                    'response_code'    => 403,
+                    'response_message' => 'You are not verified yet, please contact the administration !',
+                    'response_data'    => $user
+                ];
             }
-            elseif(Hash::check($request['password'], $user->password) && $user->email_verified_at == NULL) {
-                $message = 'You are not verified yet, please contact the administration !';
-                $user->tokens()->delete();
-            }
-            
-        }
-
-
-        $user = Company::where('email', $request['email'])->first();
-        if($user) {
-            if (Hash::check($request['password'], $user->password) && $user->email_verified_at != NULL) {
-                $user['token']     =  $user->createToken('Company', ['role:company'])->plainTextToken; 
-                $user['user_type'] = 'Company';
-                $result = true;
-            }
-            elseif(Hash::check($request['password'], $user->password) && $user->email_verified_at == NULL) {
-                $message = 'You are not verified yet, please contact the administration !';
-                $user->tokens()->delete();
-            }
-
-        }
-
-        if($result) {
             return [
                 'response_code'    => 200,
                 'response_message' => 'Logged In Successfully',
                 'response_data'    => $user
             ];
         }
+        else {            
+            return [
+                'response_code'    => 400,
+                'response_message' => 'The email or Password are not correct !',
+                'response_data'    => NULL
+            ];
+        }
+    }
 
-        return [
-            'response_code'    => 400,
-            'response_message' => $message,
-            'response_data'    => NULL
-        ];     
+    function login($request) 
+    {
+        $user = User::where('email', $request['email'])->first();
+
+        if($user) { 
+            $result = $this->create_credentials($request, $user);
+        }
+        else {
+            $user   = Company::where('email', $request['email'])->first();
+            if($user) {
+                $result = $this->create_credentials($request, $user);
+
+                if($result['response_code'] == 403) {
+                    $registration_files = $this->file_manager_repository->getAllRegistrationFiles($user->id);
+                    if($registration_files->isEmpty()) {
+                        $result['response_code']    = 300;
+                        $result['response_message'] = 'Please upload the needed Company verification files in order for administration to proceed with your application.';
+                    }
+                }
+            }
+            else {
+                $result = [
+                    'response_code'    => 400,
+                    'response_message' => 'The email or Password are not correct !',
+                    'response_data'    => NULL
+                ];
+            }
+        }
+
+        return $result;     
     }
 
 
