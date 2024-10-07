@@ -3,6 +3,8 @@
 namespace App\Domains\Packages\Controllers;
 
 // Services
+
+use App\Domains\Packages\Requests\StorePackageRequest;
 use App\Domains\Packages\Services\PackageService;
 
 // Liberaries
@@ -30,12 +32,24 @@ class PackageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store( $request)
+    public function store(StorePackageRequest $request)
     {
         $result = $this->package_service->store($request->validated());
         
         return response()->json($result);
     }
 
+    public function get_package($id) 
+    {
+        $result = $this->package_service->get_by_id($id);
 
+        return response()->json($result);
+    }
+
+    public function all_packages() 
+    {
+        $result = $this->package_service->get_all_packages();
+
+        return response()->json($result);
+    }
 }

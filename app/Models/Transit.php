@@ -5,33 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Package extends Model
+class Transit extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
-        'name',
-        'name_ar',
-        'from_city',
+        'package_id',
         'to_city',
         'no_of_nights',
-        'price_per_person',
         'hotel_name',
         'hotel_name_ar',
-        'reservation_type',
-        'is_cruise',
         'description',
         'description_ar'
     ];
 
-    public function Transits() 
+    public function Package() 
     {
-        return $this->hasMany(Transit::class);    
-    }
-
-    public function from_city() 
-    {
-        return $this->belongsTo(City::class, 'from_city');    
+        return $this->belongsTo(Package::class);    
     }
 
     public function to_city() 
