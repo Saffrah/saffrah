@@ -2,11 +2,8 @@
 
 namespace App\Domains\FileManager\Services;
 
-use App\Domains\Company\Services\CompanyService;
 use App\Domains\FileManager\Repositories\FileManagerRepository;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Company;
-
+use App\Domains\Company\Services\CompanyService;
 
 class FileManagerService 
 {
@@ -15,12 +12,12 @@ class FileManagerService
     private $package_service;
 
     public function __construct(
-        CompanyService $company_service,
-        FileManagerRepository $file_manager_repository
+        FileManagerRepository $file_manager_repository,
+        CompanyService        $company_service
     ) 
     {
-        $this->company_service         = $company_service;
         $this->file_manager_repository = $file_manager_repository;
+        $this->company_service         = $company_service;
     }
 
     public function storeFile($request)
@@ -34,17 +31,15 @@ class FileManagerService
             $array     = [
                 'company_id'    => $company->id,
                 'model_type'    => $request['model_type'],
-                'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
+                'package_id'    => isset($request['model_id']) ? $request['model_id'] : NULL,
                 'file_name'     => $file_name,
                 'download_link' => public_path('uploads').'/'.$file_name
             ];
 
-            $created = $this->file_manager_repository->create($array);
-
+            $created  = $this->file_manager_repository->create($array);
             $uploaded = $created;
         }
-
-        
+  
         if($uploaded) {
             return [
                 'response_code'    => 200,
@@ -61,14 +56,16 @@ class FileManagerService
     }
 
     /**
-     * @param $reportId
+     * @param $package_id
      */
-    public function getFile($reportId = null)
+    public function getPackageFiles($package_id)
     {
-        $company = Company::getAuthCompany();
+        $company = auth('sanctum')->user();
+
         if ($company) {
-            return $this->file_manager_repository->getAll($company->id, $reportId);
+            return $this->file_manager_repository->getAllPackageFiles($company->id, $package_id);
         }
+
         return null;
     }
 
@@ -82,16 +79,6 @@ class FileManagerService
         } catch (\Exception $e) {
             print "An error occurred: " . $e->getMessage();
         }
-    }
-
-    /**
-     * @param $id
-     */
-    public function changeStatus($id)
-    {
-        $file = $this->file_manager_repository->getOne($id);
-        $file->file_status = '反映完了';
-        $file->save();
     }
 
 

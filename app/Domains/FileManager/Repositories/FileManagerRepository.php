@@ -25,22 +25,12 @@ class FileManagerRepository
      * */
     public function getAllRegistrationFiles($company_id)
     {
-        return $this->model->where('company_id', $company_id)->whereNull('package_id')->get();
+        return $this->model->where('company_id', $company_id)->where('model_type', 'company')->whereNull('package_id')->get();
     }
 
-    public function getWithSpecs($company_id, $report_id, $referrer_id = null, $specs = [])
+    public function getAllPackageFiles($company_id, $package_id) 
     {
-        $query = $this->model->where('company_id', $company_id)
-                             ->where('report_id', $report_id);
-
-        if(isset($specs['service_name'])) {
-            $query->where('service_name', $specs['service_name']);
-        }
-        if($referrer_id) {
-            return $query->where('referrer_id', $referrer_id)->first();
-        }
-        
-        return $query->get();
+        return $this->model->where('company_id', $company_id)->where('model_type', 'package')->where('package_id', $package_id)->get();
     }
 
     public function create($array = [])

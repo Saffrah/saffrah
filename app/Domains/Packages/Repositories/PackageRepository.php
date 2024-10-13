@@ -61,12 +61,12 @@ class PackageRepository
 
     public function by_id($id) 
     {
-        return $this->model->find($id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city'])->first();   
+        return $this->model->find($id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->first();   
     }
 
     public function all() 
     {
-        return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city'])->get();   
+        return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();   
     }
 
     

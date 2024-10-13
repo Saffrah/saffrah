@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domains\FileManager\Models\FileManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,5 +38,10 @@ class Package extends Model
     public function to_city() 
     {
         return $this->belongsTo(City::class, 'to_city');    
+    }
+
+    public function Files() 
+    {
+        return $this->hasMany(FileManager::class);    
     }
 }
