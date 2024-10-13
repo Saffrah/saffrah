@@ -66,8 +66,7 @@ class FileManagerController extends Controller
      */
     public function show(Request $request)
     {
-        $files = $this->file_manager_service->getFile($request->report_id);
-        $user  = Auth::user();
+        $files = $this->file_manager_service->getPackageFiles($request->package_id);
         
         if($files) {
             return response()->json([
@@ -132,30 +131,6 @@ class FileManagerController extends Controller
             'message' => 'no such file',
             'body'    => ''
         ]);
-    }
-
-    /**
-     * update file status.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function changeFileStatus($id) 
-    {
-        if($id) {
-            $this->file_manager_service->changeStatus($id);
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'message' => '',
-            ]);
-        } else {
-            return response()->json([
-                'code'    => 400,
-                'status'  => 'failed',
-                'message' => 'no such file',
-            ]);
-        }
     }
 
 }
