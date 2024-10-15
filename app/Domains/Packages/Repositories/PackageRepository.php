@@ -2,6 +2,7 @@
 
 namespace App\Domains\Packages\Repositories;
 
+use App\Domains\FileManager\Models\FileManager;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Package;
@@ -13,18 +14,21 @@ class PackageRepository
     private $city_model;
     private $country_model;
     private $transit_model;
+    private $file_manager_model;
 
     public function __construct(
-        Country $country_model,
-        City    $city_model,
-        Package $model,
-        Transit $transit_model
+        FileManager $file_manager_model,
+        Country     $country_model,
+        City        $city_model,
+        Package     $model,
+        Transit     $transit_model,
     )
     {
-        $this->model         = $model;
-        $this->city_model    = $city_model;
-        $this->country_model = $country_model;
-        $this->transit_model = $transit_model;
+        $this->model              = $model;
+        $this->city_model         = $city_model;
+        $this->country_model      = $country_model;
+        $this->transit_model      = $transit_model;
+        $this->file_manager_model = $file_manager_model;
     }
 
     public function get_cities() 
@@ -61,12 +65,38 @@ class PackageRepository
 
     public function by_id($id) 
     {
-        return $this->model->find($id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->first();   
+        return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->first();   
+    }
+
+    function by_company_id($id) 
+    {
+        return $this->model->where('company_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();    
     }
 
     public function all() 
     {
         return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();   
+    }
+
+    public function delete($id) 
+    {
+        $company = auth('sanctum')->user();
+
+        $package = $this->model->where('company_id', $company->id)->where('id', $id)->first();
+       
+        if($package) {
+            $transits = $this->transit_model->where('package_id', $id)->get();
+            if($transits)
+                $transits->each->delete();
+    
+            $files = $this->file_manager_model->where('model_type', 'package')->where('package_id', $id)->get();
+            if($files)
+                $files->each->delete();
+
+            return $package->delete($id);    
+        }
+
+        return false;
     }
 
     
