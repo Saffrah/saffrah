@@ -11,6 +11,7 @@ class Package extends Model
     use HasFactory;
     
     protected $fillable = [
+        'company_id',
         'name',
         'name_ar',
         'from_city',
@@ -24,6 +25,11 @@ class Package extends Model
         'description',
         'description_ar'
     ];
+
+    public function Company() 
+    {
+        return $this->belongsTo(Company::class);    
+    }
 
     public function Transits() 
     {

@@ -4,6 +4,7 @@ namespace App\Domains\Packages\Controllers;
 
 // Services
 
+use App\Domains\Packages\Requests\PackageRequest;
 use App\Domains\Packages\Requests\StorePackageRequest;
 use App\Domains\Packages\Services\PackageService;
 
@@ -46,10 +47,24 @@ class PackageController extends Controller
         return response()->json($result);
     }
 
+    public function get_company_packages()
+    {
+        $result = $this->package_service->get_company_packages();
+
+        return response()->json($result);
+    }
+
     public function all_packages() 
     {
         $result = $this->package_service->get_all_packages();
 
+        return response()->json($result);
+    }
+
+    public function delete(PackageRequest $request) 
+    {
+        $result = $this->package_service->delete($request->package_id);
+        
         return response()->json($result);
     }
 }

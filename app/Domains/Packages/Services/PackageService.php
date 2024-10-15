@@ -34,23 +34,34 @@ class PackageService
 
     public function store($request) 
     {
-        $package = $this->package_repository->store($request);
-        
-        if($package) { 
-            $transits = $this->package_repository->add_transit($package->id, $request['transits']);
-        }
+        $company = auth('sanctum')->user();
 
-        if($package && $transits) {
+        if($company) {
+            $request['company_id'] = $company->id;
+            $package = $this->package_repository->store($request);
+            
+            if($package && isset($request['transits'])) { 
+                $transits = $this->package_repository->add_transit($package->id, $request['transits']);
+            }
+    
+            if($package) {
+                return [
+                    'response_code'    => 200,
+                    'response_message' => 'registered successfully !', 
+                    'response_data'    => $this->package_repository->by_id($package->id)
+                ];
+            }
+    
             return [
-                'response_code'    => 200,
-                'response_message' => 'registered successfully !', 
-                'response_data'    => $this->package_repository->by_id($package->id)
+                'response_code'    => 400,
+                'response_message' => 'registered failed !', 
+                'response_data'    => []
             ];
         }
 
         return [
             'response_code'    => 400,
-            'response_message' => 'registered failed !', 
+            'response_message' => 'Company not found !', 
             'response_data'    => []
         ];
     }
@@ -74,6 +85,35 @@ class PackageService
         ];
     }
 
+    public function get_company_packages() 
+    {
+        $company = auth('sanctum')->user();
+        
+        if($company) {
+            $results = $this->package_repository->by_company_id($company->id);
+
+            if($results) {
+                return [
+                    'response_code'    => 200,
+                    'response_message' => 'Packages fitched successfully !', 
+                    'response_data'    => $results
+                ];
+            }
+    
+            return [
+                'response_code'    => 400,
+                'response_message' => 'fitching failed !', 
+                'response_data'    => []
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'Company not found !', 
+            'response_data'    => []
+        ];
+    }
+
     public function get_all_packages() 
     {
         $results = $this->package_repository->all();
@@ -89,6 +129,25 @@ class PackageService
         return [
             'response_code'    => 400,
             'response_message' => 'fitching failed !', 
+            'response_data'    => []
+        ];
+    }
+
+    public function delete($id) 
+    {
+        $results = $this->package_repository->delete($id);
+        
+        if($results) {
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Packages deleted successfully !', 
+                'response_data'    => $results
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'the Package does not exist !', 
             'response_data'    => []
         ];
     }
