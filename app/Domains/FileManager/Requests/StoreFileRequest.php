@@ -2,9 +2,9 @@
 
 namespace App\Domains\FileManager\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\RequestValidatorResponse;
 
-class StoreFileRequest extends FormRequest
+class StoreFileRequest extends RequestValidatorResponse
 {
     /**
      * Determine if the user is authorized to make this request.

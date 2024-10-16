@@ -2,9 +2,10 @@
 
 namespace App\Domains\Auth\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Domains\Auth\Rules\EmailOrPhoneRule;
+use App\Http\Requests\RequestValidatorResponse;
 
-class AuthLoginRequest extends FormRequest
+class AuthLoginRequest extends RequestValidatorResponse
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,7 @@ class AuthLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => 'required|email',
+            'email'    => ['required', new EmailOrPhoneRule],
             'password' => 'required'
         ];
     }

@@ -2,9 +2,9 @@
 
 namespace App\Domains\Packages\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\RequestValidatorResponse;
 
-class StorePackageRequest extends FormRequest
+class StorePackageRequest extends RequestValidatorResponse
 {
     /**
      * Determine if the user is authorized to make this request.

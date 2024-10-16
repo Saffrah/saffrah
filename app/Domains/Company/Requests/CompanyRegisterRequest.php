@@ -2,10 +2,10 @@
 
 namespace App\Domains\Company\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\RequestValidatorResponse;
 use Illuminate\Validation\Rules\Password;
 
-class CompanyRegisterRequest extends FormRequest
+class CompanyRegisterRequest extends RequestValidatorResponse
 {
     /**
      * Determine if the user is authorized to make this request.

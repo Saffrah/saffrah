@@ -4,10 +4,10 @@ namespace App\Domains\Auth\Requests;
 
 use App\Domains\Auth\Rules\EmailUniqueRule;
 use App\Domains\Auth\Rules\PhoneNumberUniqueRule;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\RequestValidatorResponse;
 use Illuminate\Validation\Rules\Password;
 
-class AuthRegisterRequest extends FormRequest
+class AuthRegisterRequest extends RequestValidatorResponse
 {
     /**
      * Determine if the user is authorized to make this request.

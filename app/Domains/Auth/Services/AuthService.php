@@ -89,13 +89,13 @@ class AuthService
 
     function login($request) 
     {
-        $user = User::where('email', $request['email'])->first();
+        $user = User::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
 
         if($user) { 
             $result = $this->create_credentials($request, $user);
         }
         else {
-            $user   = Company::where('email', $request['email'])->first();
+            $user   = Company::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
             if($user) {
                 $result = $this->create_credentials($request, $user);
 
@@ -110,7 +110,7 @@ class AuthService
             else {
                 $result = [
                     'response_code'    => 400,
-                    'response_message' => 'The email or Password are not correct !',
+                    'response_message' => 'These Credentials are not correct !',
                     'response_data'    => NULL
                 ];
             }
