@@ -133,6 +133,40 @@ class PackageService
         ];
     }
 
+    public function edit($request) 
+    {
+        $company = auth('sanctum')->user();
+        $package = $this->package_repository->get_one_by_company_id($company->id, $request['package_id']);
+        
+        if($company && $package) {
+            $result  = $this->package_repository->update($request);
+            
+            if($result) {
+                $this->package_repository->update_transits($request['package_id'], isset($request['transits']) ? $request['transits'] : null);
+            }
+
+            if($result) {
+                return [
+                    'response_code'    => 200,
+                    'response_message' => 'registered successfully !', 
+                    'response_data'    => $this->package_repository->by_id($request['package_id'])
+                ];
+            }
+
+            return [
+                'response_code'    => 400,
+                'response_message' => 'registered failed !', 
+                'response_data'    => []
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'This Package does not exist under your company !', 
+            'response_data'    => []
+        ];
+    }
+
     public function delete($id) 
     {
         $results = $this->package_repository->delete($id);

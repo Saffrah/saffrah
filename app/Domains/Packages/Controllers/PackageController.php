@@ -6,6 +6,7 @@ namespace App\Domains\Packages\Controllers;
 
 use App\Domains\Packages\Requests\PackageRequest;
 use App\Domains\Packages\Requests\StorePackageRequest;
+use App\Domains\Packages\Requests\UpdatePackageRequest;
 use App\Domains\Packages\Services\PackageService;
 
 // Liberaries
@@ -58,6 +59,13 @@ class PackageController extends Controller
     {
         $result = $this->package_service->get_all_packages();
 
+        return response()->json($result);
+    }
+
+    public function edit(UpdatePackageRequest $request) 
+    {
+        $result = $this->package_service->edit($request->validated());
+        
         return response()->json($result);
     }
 
