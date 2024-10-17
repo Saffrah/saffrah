@@ -68,6 +68,11 @@ class PackageRepository
         return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->first();   
     }
 
+    public function get_one_by_company_id($company_id, $package_id) 
+    {
+        return $this->model->where('id', $package_id)->where('company_id', $company_id)->first();    
+    }
+
     function by_company_id($id) 
     {
         return $this->model->where('company_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();    
@@ -76,6 +81,25 @@ class PackageRepository
     public function all() 
     {
         return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();   
+    }
+
+    public function update($request) 
+    {
+        return $this->model->updateOrCreate([
+            'id'         => $request['package_id'],
+            'company_id' => auth('sanctum')->user()->id, 
+        ], $request);    
+    }
+
+    public function update_transits($package_id, $transits) 
+    {
+        $delete = $this->transit_model->where('package_id', $package_id)->delete();
+        
+        if($delete && $transits) {
+            return $this->add_transit($package_id, $transits);
+        }
+
+        return false;
     }
 
     public function delete($id) 

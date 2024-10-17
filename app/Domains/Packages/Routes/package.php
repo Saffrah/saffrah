@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', CompanyMiddleware::class])->group(function ()
     Route::get('destinations', [PackageController::class, 'destinations']);
     Route::get('package/{package_id}', [PackageController::class, 'get_package']);
     Route::get('company/all', [PackageController::class, 'get_company_packages']);
-    Route::post('delete', [PackageController::class, 'delete']);
     Route::post('store', [PackageController::class, 'store']);
+    Route::post('update', [PackageController::class, 'edit']);
+    Route::post('delete', [PackageController::class, 'delete']);
 });
