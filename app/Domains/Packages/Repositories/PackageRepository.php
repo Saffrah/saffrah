@@ -33,14 +33,9 @@ class PackageRepository
 
     public function get_cities() 
     {
-        return $this->city_model->join('countries', 'countries.id', 'cities.country_id')
-                                ->select(
-                                    'cities.id', 'cities.name', 'cities.country_code',
-                                    'countries.name AS country_name', 'countries.iso3'
-                                )
-                                ->groupBy('cities.id')
-                                ->get()
-                                ->groupBy('country_name');
+        return $this->country_model->select(
+            'id', 'name', 'iso3'
+        )->with(['Cities:id,name,country_id'])->get()->toArray();
     }
 
     public function store($request) 

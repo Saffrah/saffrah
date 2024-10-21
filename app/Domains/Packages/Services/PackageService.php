@@ -21,7 +21,7 @@ class PackageService
             return [
                 'response_code'    => 200,
                 'response_message' => 'Cities Retrieved successfully !', 
-                'response_data'    => $cities->toArray()
+                'response_data'    => $cities
             ];
         }
 

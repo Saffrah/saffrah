@@ -25,7 +25,7 @@ class FileManagerService
         $company  = auth('sanctum')->user();
         $uploaded = false;
         foreach ($request['files'] as $key => $file) {
-            $file_name = $company->id.'_'.str_replace(' ', '_', $company->name).'_'.$request['model_type'].now().'.'.$file->getClientOriginalExtension();
+            $file_name = $company->id.'_'.str_replace(' ', '_', $company->name).'_'.$request['model_type'].date('Ymd_His').'.'.$file->getClientOriginalExtension();
             $uploaded  = $file->move(public_path('uploads'), $file_name);
             
             $array     = [
