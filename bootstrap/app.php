@@ -30,6 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')
                 ->prefix('api/packages')
                 ->group(base_path('app/Domains/Packages/Routes/package.php'));
+
+            Route::middleware('api')
+                ->prefix('api/offers')
+                ->group(base_path('app/Domains/Offers/Routes/offer.php'));
     
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
