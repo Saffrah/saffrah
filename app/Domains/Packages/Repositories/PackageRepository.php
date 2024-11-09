@@ -73,9 +73,15 @@ class PackageRepository
         return $this->model->where('company_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();    
     }
 
-    public function all() 
+    public function all($request) 
     {
-        return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();   
+        $query = $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files']);
+        
+        if (isset($request['is_cruise'])) {
+            $query->where('is_cruise', $request['is_cruise']);
+        }
+
+        return $query->get();   
     }
 
     public function update($request) 

@@ -3,7 +3,7 @@
 namespace App\Domains\Packages\Controllers;
 
 // Services
-
+use App\Domains\Packages\Requests\AllPackagesRequest;
 use App\Domains\Packages\Requests\PackageRequest;
 use App\Domains\Packages\Requests\StorePackageRequest;
 use App\Domains\Packages\Requests\UpdatePackageRequest;
@@ -55,9 +55,9 @@ class PackageController extends Controller
         return response()->json($result);
     }
 
-    public function all_packages() 
+    public function all_packages(AllPackagesRequest $request) 
     {
-        $result = $this->package_service->get_all_packages();
+        $result = $this->package_service->get_all_packages($request->validated());
 
         return response()->json($result);
     }

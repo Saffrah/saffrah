@@ -114,9 +114,9 @@ class PackageService
         ];
     }
 
-    public function get_all_packages() 
+    public function get_all_packages($request) 
     {
-        $results = $this->package_repository->all();
+        $results = $this->package_repository->all($request);
         
         if($results) {
             return [
