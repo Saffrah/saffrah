@@ -116,7 +116,7 @@ class PackageService
 
     public function get_all_packages($request) 
     {
-        $results = $this->package_repository->all($request);
+        $results = $this->package_repository->get_by_country($request);
         
         if($results) {
             return [

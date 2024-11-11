@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:sanctum', CompanyMiddleware::class])->group(function () {
-    Route::get('all_offers', [OfferController::class, 'all_packages']);
+    Route::get('all_offers', [OfferController::class, 'all_offers']);
 });
 
 Route::middleware(['auth:sanctum', UserMiddleware::class])->group(function () {

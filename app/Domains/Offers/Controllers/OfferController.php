@@ -44,5 +44,12 @@ class OfferController extends Controller
         return response()->json($result);
     }
 
+    public function all_offers() 
+    {
+        $result = $this->offer_service->get_all_offers();
+
+        return response()->json($result);
+    }
+
 
 }
