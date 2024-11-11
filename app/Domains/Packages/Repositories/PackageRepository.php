@@ -84,6 +84,32 @@ class PackageRepository
         return $query->get();   
     }
 
+    public function get_by_country($request) 
+    {
+        $countries = $this->country_model->join('cities', 'cities.country_id', 'countries.id')
+                                         ->join('packages', 'packages.to_city', 'cities.id')
+                                         ->select('countries.*')
+                                         ->groupBy('countries.id')
+                                         ->get()
+                                         ->toArray();
+        
+        foreach ($countries as $key => $country) 
+        {
+            $cities = $this->city_model->join('countries', 'countries.id', 'cities.country_id')
+                                       ->join('packages', 'packages.to_city', 'cities.id')
+                                       ->select('cities.*')
+                                       ->with(['packages', 'packages.Company', 'packages.Transits', 'packages.from_city', 'packages.to_city', 'packages.Transits.to_city'])
+                                       ->where('countries.id', $country['id'])
+                                       ->get()
+                                       ->toArray();
+            if($cities) {
+                $countries[$key]['cities'] = $cities;
+            }
+        }
+
+        return $countries;
+    }
+
     public function update($request) 
     {
         return $this->model->updateOrCreate([

@@ -96,4 +96,23 @@ class OfferService
         ];
     }
 
+    public function get_all_offers() 
+    {
+        $results = $this->offer_repository->all();
+        
+        if($results) {
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Packages fitched successfully !', 
+                'response_data'    => $results
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'fitching failed !', 
+            'response_data'    => []
+        ];
+    }
+
 }

@@ -45,4 +45,11 @@ class OfferRepository
     {
         return $this->model->where('user_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city'])->get();    
     }
+
+    public function all() 
+    {
+        return $this->model->with(['User', 'Transits', 'Transits.to_city', 'from_city', 'to_city'])->get();
+    }
+
+
 }
