@@ -65,7 +65,7 @@ class AuthService
             $user->tokens()->delete();
             $user['token']     = $user->createToken($type, ['role:'.$type])->plainTextToken; 
             $user['user_type'] = $type;
-            if($user->email_verified_at == NULL) {
+            if($type == 'company' && $user->email_verified_at == NULL) {
                 return [
                     'response_code'    => 403,
                     'response_message' => 'You are not verified yet, please contact the administration !',
