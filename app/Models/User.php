@@ -46,4 +46,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-}
+
+    public function ConfirmedPackages() 
+    {
+        return $this->hasMany(PackageConfirm::class);    
+    }
+
+}   

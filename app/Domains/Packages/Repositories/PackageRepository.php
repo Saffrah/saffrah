@@ -6,6 +6,7 @@ use App\Domains\FileManager\Models\FileManager;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Package;
+use App\Models\PackageConfirm;
 use App\Models\Transit;
 
 class PackageRepository
@@ -15,20 +16,23 @@ class PackageRepository
     private $country_model;
     private $transit_model;
     private $file_manager_model;
+    private $package_confirm_model;
 
     public function __construct(
-        FileManager $file_manager_model,
-        Country     $country_model,
-        City        $city_model,
-        Package     $model,
-        Transit     $transit_model,
+        PackageConfirm $package_confirm_model,
+        FileManager    $file_manager_model,
+        Transit        $transit_model,
+        Country        $country_model,
+        City           $city_model,
+        Package        $model
     )
     {
-        $this->model              = $model;
-        $this->city_model         = $city_model;
-        $this->country_model      = $country_model;
-        $this->transit_model      = $transit_model;
-        $this->file_manager_model = $file_manager_model;
+        $this->model                 = $model;
+        $this->city_model            = $city_model;
+        $this->country_model         = $country_model;
+        $this->transit_model         = $transit_model;
+        $this->file_manager_model    = $file_manager_model;
+        $this->package_confirm_model = $package_confirm_model;
     }
 
     public function get_cities() 
@@ -145,6 +149,24 @@ class PackageRepository
                 $files->each->delete();
 
             return $package->delete($id);    
+        }
+
+        return false;
+    }
+
+    public function confirm($request) 
+    {
+        $user = auth('sanctum')->user();
+
+        $package = $this->model->where('id', $request['package_id'])->first();
+       
+        if($package) {
+            return $this->package_confirm_model->create([
+                'user_id'     => $user->id,
+                'package_id'  => $package->id,
+                'paid_status' => 1,
+                'due_date'    => $request['due_date'],
+            ]);
         }
 
         return false;
