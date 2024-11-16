@@ -186,5 +186,24 @@ class PackageService
         ];
     }
 
+    public function confirm($request) 
+    {
+        $results = $this->package_repository->confirm($request);
+        
+        if($results) {
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Packages Confirmed successfully !', 
+                'response_data'    => $results
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'this Package does not exist !', 
+            'response_data'    => []
+        ];
+    }
+
 
 }

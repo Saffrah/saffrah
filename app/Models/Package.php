@@ -48,6 +48,6 @@ class Package extends Model
 
     public function Files() 
     {
-        return $this->hasMany(FileManager::class);    
+        return $this->hasMany(FileManager::class)->where('model_type', 'package');    
     }
 }

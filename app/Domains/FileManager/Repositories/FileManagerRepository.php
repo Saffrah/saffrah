@@ -25,12 +25,17 @@ class FileManagerRepository
      * */
     public function getAllRegistrationFiles($company_id)
     {
-        return $this->model->where('company_id', $company_id)->where('model_type', 'company')->whereNull('package_id')->get();
+        return $this->model->where('model_id', $company_id)->where('model_type', 'company')->whereNull('package_id')->get();
     }
 
     public function getAllPackageFiles($company_id, $package_id) 
     {
-        return $this->model->where('company_id', $company_id)->where('model_type', 'package')->where('package_id', $package_id)->get();
+        return $this->model->where('model_id', $company_id)->where('model_type', 'company')->where('package_id', $package_id)->get();
+    }
+
+    public function getAllUserFiles($user_id, $package_id) 
+    {
+        return $this->model->where('model_id', $user_id)->where('model_type', 'user')->where('package_id', $package_id)->get();
     }
 
     public function create($array = [])

@@ -22,16 +22,17 @@ class FileManagerService
 
     public function storeFile($request)
     {
-        $company  = auth('sanctum')->user();
+        $entity  = auth('sanctum')->user();
         $uploaded = false;
+
         foreach ($request['files'] as $key => $file) {
-            $file_name = $company->id.'_'.str_replace(' ', '_', $company->name).'_'.($key+1).'_'.$request['model_type'].date('Ymd_His').'.'.$file->getClientOriginalExtension();
+            $file_name = $entity->id.'_'.str_replace(' ', '_', $entity->name).'_'.($key+1).'_'.$request['model_type'].date('Ymd_His').'.'.$file->getClientOriginalExtension();
             $uploaded  = $file->move(public_path('uploads'), $file_name);
             
             $array     = [
-                'company_id'    => $company->id,
+                'model_id'      => $entity->id,
                 'model_type'    => $request['model_type'],
-                'package_id'    => isset($request['model_id']) ? $request['model_id'] : NULL,
+                'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
                 'file_name'     => $file_name,
                 'download_link' => '/public/uploads/'.$file_name
             ];

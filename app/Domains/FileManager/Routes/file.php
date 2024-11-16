@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Domains\FileManager\Controllers\FileManagerController;
 use App\Http\Middleware\CompanyMiddleware;
 
-Route::middleware(['auth:sanctum', CompanyMiddleware::class])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [FileManagerController::class, 'index'])->name('file_manager.index');
     Route::post('/', [FileManagerController::class, 'store'])->name('file_manager.store');
     Route::get('/all/{report_id?}', [FileManagerController::class, 'show']);

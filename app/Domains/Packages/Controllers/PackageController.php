@@ -3,11 +3,14 @@
 namespace App\Domains\Packages\Controllers;
 
 // Services
-use App\Domains\Packages\Requests\AllPackagesRequest;
+use App\Domains\Packages\Services\PackageService;
+
+// Requests
 use App\Domains\Packages\Requests\PackageRequest;
+use App\Domains\Packages\Requests\AllPackagesRequest;
 use App\Domains\Packages\Requests\StorePackageRequest;
 use App\Domains\Packages\Requests\UpdatePackageRequest;
-use App\Domains\Packages\Services\PackageService;
+use App\Domains\Packages\Requests\ConfirmPackageRequest;
 
 // Liberaries
 use App\Http\Controllers\Controller;
@@ -75,4 +78,13 @@ class PackageController extends Controller
         
         return response()->json($result);
     }
+
+    public function confirmPackage(ConfirmPackageRequest $request) 
+    {
+        $result = $this->package_service->confirm($request->validated());
+        
+        return response()->json($result);
+    }
+
+
 }
