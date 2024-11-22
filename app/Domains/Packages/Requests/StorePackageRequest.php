@@ -22,6 +22,8 @@ class StorePackageRequest extends RequestValidatorResponse
     public function rules(): array
     {
         return [
+            'user_id'          => 'nullable|exists:users,id',
+            'offer_id'         => 'required_with:user_id|exists:offers,id',
             'name'             => 'required|string|max:250',
             'name_ar'          => 'required|string|max:250',
             'from_city'        => 'required|numeric|exists:cities,id',
@@ -32,6 +34,7 @@ class StorePackageRequest extends RequestValidatorResponse
             'hotel_name_ar'    => 'required|string|max:250',
             'reservation_type' => 'numeric|in:1,2,3',
             'is_cruise'        => 'boolean',
+            'end_date'         => 'required|date_format:Y-m-d',
             'description'      => 'string',
             'description_ar'   => 'string',
             'transits'         => 'array',

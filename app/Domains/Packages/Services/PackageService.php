@@ -43,6 +43,13 @@ class PackageService
             if($package && isset($request['transits'])) { 
                 $transits = $this->package_repository->add_transit($package->id, $request['transits']);
             }
+
+            if($request['user_id']) {
+                $this->package_repository->addToUserOffer([
+                    'offer_id'   => $request['offer_id'],
+                    'package_id' => $package->id
+                ]);
+            }
     
             if($package) {
                 return [

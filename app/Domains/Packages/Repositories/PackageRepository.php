@@ -5,6 +5,7 @@ namespace App\Domains\Packages\Repositories;
 use App\Domains\FileManager\Models\FileManager;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\offerPackage;
 use App\Models\Package;
 use App\Models\PackageConfirm;
 use App\Models\Transit;
@@ -16,10 +17,12 @@ class PackageRepository
     private $country_model;
     private $transit_model;
     private $file_manager_model;
+    private $offer_package_model;
     private $package_confirm_model;
 
     public function __construct(
         PackageConfirm $package_confirm_model,
+        offerPackage   $offer_package_model,
         FileManager    $file_manager_model,
         Transit        $transit_model,
         Country        $country_model,
@@ -32,6 +35,7 @@ class PackageRepository
         $this->country_model         = $country_model;
         $this->transit_model         = $transit_model;
         $this->file_manager_model    = $file_manager_model;
+        $this->offer_package_model   = $offer_package_model;
         $this->package_confirm_model = $package_confirm_model;
     }
 
@@ -60,6 +64,11 @@ class PackageRepository
         }
 
         return $stored;
+    }
+
+    public function addToUserOffer($request) 
+    {
+        return $this->offer_package_model->create($request);
     }
 
     public function by_id($id) 

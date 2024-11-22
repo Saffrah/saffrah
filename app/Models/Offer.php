@@ -43,7 +43,12 @@ class Offer extends Model
 
     public function to_city() 
     {
-        return $this->belongsTo(City::class, 'to_city');    
+        return $this->belongsTo(City::class, 'to_city');  
+    }
+
+    public function Packages() 
+    {
+        return $this->belongsToMany(Package::class, 'offer_packages');
     }
 
 }
