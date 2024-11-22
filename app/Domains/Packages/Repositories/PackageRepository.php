@@ -113,6 +113,10 @@ class PackageRepository
             }
         }
 
+        foreach ($countries as $key => $country) {
+            if(empty($country['cities'])) unset($countries[$key]);
+        }
+
         return $countries;
     }
 
