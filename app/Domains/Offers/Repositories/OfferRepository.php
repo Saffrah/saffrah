@@ -38,7 +38,7 @@ class OfferRepository
 
     public function by_id($id) 
     {
-        return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city'])->first();   
+        return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Packages', 'Packages.Transits', 'Packages.From_city', 'Packages.To_city', 'Packages.Files'])->first();   
     }
 
     function by_user_id($id) 

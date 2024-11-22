@@ -11,6 +11,7 @@ class Package extends Model
     use HasFactory;
     
     protected $fillable = [
+        'user_id',
         'company_id',
         'name',
         'name_ar',
@@ -49,5 +50,10 @@ class Package extends Model
     public function Files() 
     {
         return $this->hasMany(FileManager::class)->where('model_type', 'package');    
+    }
+
+    public function Offers() 
+    {
+        return $this->belongsToMany(Offer::class, 'offer_packages');
     }
 }
