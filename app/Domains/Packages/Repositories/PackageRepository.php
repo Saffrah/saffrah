@@ -96,18 +96,20 @@ class PackageRepository
                                          ->groupBy('countries.id')
                                          ->get()
                                          ->toArray();
-        
         foreach ($countries as $key => $country) 
         {
             $cities = $this->city_model->join('countries', 'countries.id', 'cities.country_id')
                                        ->join('packages', 'packages.to_city', 'cities.id')
                                        ->select('cities.*')
-                                       ->with(['packages', 'packages.Company', 'packages.Transits', 'packages.from_city', 'packages.to_city', 'packages.Transits.to_city'])
-                                       ->where('countries.id', $country['id'])
-                                       ->get()
-                                       ->toArray();
+                                       ->with(['packages', 'packages.Company', 'packages.Transits', 'packages.from_city', 'packages.to_city', 'packages.Files', 'packages.Transits.to_city'])
+                                       ->where('countries.id', $country['id']);
+
+            if(isset($request['is_cruise'])) {
+                $cities = $cities->where('packages.is_cruise', $request['is_cruise']);
+            }
+                                       
             if($cities) {
-                $countries[$key]['cities'] = $cities;
+                $countries[$key]['cities'] = $cities->get()->toArray();
             }
         }
 
