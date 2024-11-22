@@ -127,8 +127,8 @@ class PackageService
         }
 
         return [
-            'response_code'    => 400,
-            'response_message' => 'fitching failed !', 
+            'response_code'    => 200,
+            'response_message' => 'No Packages found !', 
             'response_data'    => []
         ];
     }
