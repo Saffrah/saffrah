@@ -14,13 +14,18 @@ Route::get('/', function () {
         'response_data'    => []
     ]);
 });
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('destinations', [PackageController::class, 'destinations']);
+});
+
+
 Route::middleware(['auth:sanctum', UserMiddleware::class])->group(function () {
     Route::get('all_packages', [PackageController::class, 'all_packages']);
     Route::post('confirm_package', [PackageController::class, 'confirmPackage']);
 });
 
 Route::middleware(['auth:sanctum', CompanyMiddleware::class])->group(function () {
-    Route::get('destinations', [PackageController::class, 'destinations']);
     Route::get('package/{package_id}', [PackageController::class, 'get_package']);
     Route::get('company/all', [PackageController::class, 'get_company_packages']);
     Route::post('store', [PackageController::class, 'store']);
