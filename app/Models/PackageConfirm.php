@@ -13,7 +13,9 @@ class PackageConfirm extends Model
         'user_id',
         'package_id',
         'paid_status',
-        'due_date'
+        'due_date',
+        'end_date',
+        'no_of_guests'
     ];
 
     public function User() 
