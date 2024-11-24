@@ -177,14 +177,27 @@ class PackageRepository
        
         if($package) {
             return $this->package_confirm_model->create([
-                'user_id'     => $user->id,
-                'package_id'  => $package->id,
-                'paid_status' => 1,
-                'due_date'    => $request['due_date'],
+                'user_id'      => $user->id,
+                'package_id'   => $package->id,
+                'paid_status'  => 1,
+                'due_date'     => $request['start_date'],
+                'end_date'     => $request['end_date'],
+                'no_of_guests' => $request['no_of_guests'],
             ]);
         }
 
         return false;
+    }
+
+
+    public function deals($user_id) 
+    {
+        return $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
+                           ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
+                           ->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])
+                           ->where('package_confirms.user_id', $user_id)
+                           ->get()
+                           ->toArray();    
     }
 
     

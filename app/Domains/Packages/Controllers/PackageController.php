@@ -86,5 +86,12 @@ class PackageController extends Controller
         return response()->json($result);
     }
 
+    function packageDeals() 
+    {
+        $result = $this->package_service->getDeals();
+
+        return response()->json($result);
+    }
+
 
 }
