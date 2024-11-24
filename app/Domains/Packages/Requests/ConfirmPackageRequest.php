@@ -22,8 +22,10 @@ class ConfirmPackageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_id' => 'required|exists:packages,id',
-            'due_date'   => 'required|date|after:today',
+            'package_id'   => 'required|exists:packages,id',
+            'start_date'   => 'required|date|after:today',
+            'end_date'     => 'required|date|after:start_date',
+            'no_of_guests' => 'required|numeric'
         ];
     }
 }

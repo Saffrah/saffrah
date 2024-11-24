@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware(['auth:sanctum', UserMiddleware::class])->group(function () {
     Route::get('all_packages', [PackageController::class, 'all_packages']);
+    Route::get('deals', [PackageController::class, 'packageDeals']);
     Route::post('confirm_package', [PackageController::class, 'confirmPackage']);
 });
 
