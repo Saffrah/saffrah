@@ -23,6 +23,7 @@ class Package extends Model
         'hotel_name_ar',
         'reservation_type',
         'is_cruise',
+        'end_date',
         'description',
         'description_ar'
     ];
