@@ -44,5 +44,11 @@ class CompanyController extends Controller
         return response()->json($result);
     }
 
+    function companyDeals() 
+    {
+        $result = $this->company_service->getDeals();
+
+        return response()->json($result);
+    }
 
 }

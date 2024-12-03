@@ -62,5 +62,25 @@ class CompanyService
         ];     
     }
 
+    public function getDeals() 
+    {
+        $company = auth('sanctum')->user();
+
+        $results = $this->company_repository->deals($company->id);
+        
+        if($results) {
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Deals retrieved successfully !', 
+                'response_data'    => $results
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'No deals Yet !', 
+            'response_data'    => []
+        ];
+    }
 
 }
