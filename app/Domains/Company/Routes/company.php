@@ -15,3 +15,5 @@ Route::get('/', function () {
 
 Route::post('/register', [CompanyController::class, 'register']);
 Route::post('/login', [CompanyController::class, 'login']);
+Route::get('deals', [CompanyController::class, 'companyDeals']);
+
