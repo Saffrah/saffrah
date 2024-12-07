@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CompanyMiddleware;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\UserMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
