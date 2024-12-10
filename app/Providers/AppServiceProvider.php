@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Broadcasting\PusherBeamsChannel;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Notification::extend('pusher', function () {
+            return new PusherBeamsChannel();
+        });
     }
 }

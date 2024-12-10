@@ -13,6 +13,11 @@ class AuthRepository
         $this->model = $model;
     }
 
+    public function findOne($id)
+    {
+        return $this->model->find($id);    
+    }
+
     function register($request) 
     {
         return $this->model->create($request);

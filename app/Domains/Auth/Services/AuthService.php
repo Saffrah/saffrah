@@ -35,14 +35,14 @@ class AuthService
     {
         if($request['user_type'] == 'user') {
             $result = $this->auth_repository->register($request);
-            $result['token'] = $result->createToken('User', ['role:user'])->plainTextToken; 
-
+            $result['token']    = $result->createToken('User', ['role:user'])->plainTextToken; 
+            $result['interest'] = "user_int_00".$result['id'];
         }
         else {
             $result = $this->company_repository->register($request);
             $result['token'] = $result->createToken('Company', ['role:company'])->plainTextToken; 
         }
-
+        
         if($result) {
             return [
                 'response_code'    => 200,
