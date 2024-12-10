@@ -2,15 +2,20 @@
 
 namespace App\Domains\Packages\Services;
 
+use App\Domains\Auth\Repositories\AuthRepository;
 use App\Domains\Packages\Repositories\PackageRepository;
+use App\Notifications\UserOfferAcceptedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class PackageService
 {
     private $package_repository;
+    private $auth_repository;
 
-    public function __construct(PackageRepository $package_repository ) 
+    public function __construct(PackageRepository $package_repository, AuthRepository $auth_repository) 
     {
         $this->package_repository = $package_repository;
+        $this->auth_repository    = $auth_repository;
     }
 
     public function cities_list() 
@@ -45,10 +50,16 @@ class PackageService
             }
 
             if($request['user_id']) {
-                $this->package_repository->addToUserOffer([
+                $added = $this->package_repository->addToUserOffer([
                     'offer_id'   => $request['offer_id'],
                     'package_id' => $package->id
                 ]);
+
+                // Notify the user
+                if($added) {
+                    $user = $this->auth_repository->findOne($request['user_id']);
+                    Notification::send($user, new UserOfferAcceptedNotification($user, $company));
+                }
             }
     
             if($package) {
