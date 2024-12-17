@@ -51,5 +51,12 @@ class OfferController extends Controller
         return response()->json($result);
     }
 
+    public function all_packages() 
+    {
+        $result = $this->offer_service->get_all_packages();
+
+        return response()->json($result);
+    }
+
 
 }

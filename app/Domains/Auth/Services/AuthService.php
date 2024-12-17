@@ -65,6 +65,7 @@ class AuthService
             $user->tokens()->delete();
             $user['token']     = $user->createToken($type, ['role:'.$type])->plainTextToken; 
             $user['user_type'] = $type;
+            
             if($type == 'company' && $user->email_verified_at == NULL) {
                 return [
                     'response_code'    => 403,
@@ -72,6 +73,10 @@ class AuthService
                     'response_data'    => $user
                 ];
             }
+            
+            if($type == 'user')
+                $user['interest'] = "user_int_00".$user['id'];
+
             return [
                 'response_code'    => 200,
                 'response_message' => 'Logged In Successfully',

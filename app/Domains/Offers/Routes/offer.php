@@ -23,6 +23,8 @@ Route::middleware(['auth:sanctum', UserMiddleware::class])->group(function () {
     Route::get('offer/{offer_id}', [OfferController::class, 'get_offer']);
     Route::get('user/all', [OfferController::class, 'get_user_offers']);
     Route::post('packages', [OfferController::class, 'getOfferPackages']);
+    Route::get('all_packages', [OfferController::class, 'all_packages']);
+
     Route::post('store', [OfferController::class, 'store']);
     Route::post('update', [OfferController::class, 'edit']);
     Route::post('delete', [OfferController::class, 'delete']);
