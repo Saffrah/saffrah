@@ -4,14 +4,17 @@ namespace App\Domains\Offers\Services;
 
 // Repositories
 use App\Domains\Offers\Repositories\OfferRepository;
+use App\Domains\Packages\Repositories\PackageRepository;
 
 class OfferService
 {
     private $offer_repository;
+    private $package_repository;
 
-    public function __construct(OfferRepository $offer_repository) 
+    public function __construct(OfferRepository $offer_repository, PackageRepository $package_repository) 
     {
-        $this->offer_repository = $offer_repository;
+        $this->offer_repository   = $offer_repository;
+        $this->package_repository = $package_repository;
     }
 
     public function store($request) 
@@ -99,6 +102,27 @@ class OfferService
     public function get_all_offers() 
     {
         $results = $this->offer_repository->all();
+        
+        if($results) {
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Packages fitched successfully !', 
+                'response_data'    => $results
+            ];
+        }
+
+        return [
+            'response_code'    => 400,
+            'response_message' => 'fitching failed !', 
+            'response_data'    => []
+        ];
+    }
+
+    public function get_all_packages() 
+    {
+        $user = auth('sanctum')->user();
+
+        $results = $this->package_repository->all_user_packages($user->id);
         
         if($results) {
             return [

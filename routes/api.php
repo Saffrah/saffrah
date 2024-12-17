@@ -14,17 +14,17 @@ Route::get('/', function () {
 Route::get('/pusher', function () {
 
     $beamsClient = new PushNotifications([
-        'instanceId' => config('services.beams.instance_id'),
-        'secretKey'  => config('services.beams.secret_key'),
+        'instanceId' => config('services.pusher.instance_id'),
+        'secretKey'  => config('services.pusher.secret_key'),
     ]);
 
     $response = $beamsClient->publishToInterests(
-        ['hello'], // Replace with your actual interest(s)
+        ['user_int_0022'], // Replace with your actual interest(s)
         [
             'fcm' => [
                 'notification' => [
-                    'title' => 'Hello Pusher 2 !',
-                    'body'  => 'This is a second push notification sent after setting up Pusher !',
+                    'title' => 'Hello Eslam !',
+                    'body'  => 'This is a push notification sent from local to test the interest !!',
                 ],
             ],
         ]

@@ -200,5 +200,12 @@ class PackageRepository
                            ->toArray();    
     }
 
+    public function all_user_packages($user_id) 
+    {
+        return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])
+                           ->where('user_id', $user_id)
+                           ->get()
+                           ->toArray();    
+    }
     
 }
