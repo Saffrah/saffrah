@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use Pusher\PushNotifications\PushNotifications;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,8 @@ Route::get('/', function () {
         'response_data'    => []
     ]);
 });
+
+Route::post('/companies/update_status', [CompanyController::class, 'update'])->name('companies.update.status');
 
 Route::get('/pusher', function () {
 
