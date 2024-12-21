@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Domains\FileManager\Models\FileManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Domains\FileManager\Models\FileManager;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     
     protected $fillable = [
         'user_id',

@@ -22,4 +22,9 @@ class CompanyRepository
     {
         return $this->model->where('id', $id)->update($array);    
     }
+
+    public function delete($id) 
+    {
+        return $this->model->where('id', $id)->delete();    
+    }
 }

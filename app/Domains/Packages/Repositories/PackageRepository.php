@@ -169,6 +169,25 @@ class PackageRepository
         return false;
     }
 
+    public function deleteAllByCompany($company_id) 
+    {
+        $packages = $this->model->where('company_id', $company_id)->get();
+       
+        foreach ($packages as $key => $package) {
+            $transits = $this->transit_model->where('package_id', $package->id)->get();
+            if($transits)
+                $transits->each->delete();
+    
+            $files = $this->file_manager_model->where('model_type', 'package')->where('package_id', $package->id)->get();
+            if($files)
+                $files->each->delete();
+
+            $package->delete($package->id);    
+        }
+
+        return true;
+    }
+
     public function confirm($request) 
     {
         $user = auth('sanctum')->user();
