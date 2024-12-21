@@ -13,6 +13,7 @@ Route::get('/', function () {
 });
 
 Route::post('/companies/update_status', [CompanyController::class, 'update'])->name('companies.update.status');
+Route::post('/companies/delete', [CompanyController::class, 'destroy'])->name('companies.delete');
 
 Route::get('/pusher', function () {
 

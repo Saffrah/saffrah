@@ -1,5 +1,74 @@
 @extends('layouts.dashboard')
 
+@section('CSS')
+<!-- Add this to your CSS -->
+<style>
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 450px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .modal-buttons {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .btn-confirm {
+        background: #f44336;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-cancel {
+        background: #ccc;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-confirm:hover {
+        background: #d32f2f;
+    }
+    .btn-cancel:hover {
+        background: #b0b0b0;
+    }
+    .loader {
+        border: 4px solid #f3f3f3; /* Light grey */
+        border-top: 4px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+        0% {
+        transform: rotate(0deg);
+        }
+        100% {
+        transform: rotate(360deg);
+        }
+    }
+</style>
+@stop
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -12,6 +81,19 @@
                     </div>
                 </div>
             </div>
+            <!-- Confirmation Modal -->
+            <div id="delete-modal" class="modal">
+                <div class="modal-content">
+                    <h3>Confirm Deletion</h3>
+                    <p>Are you sure you want to delete this company?</p>
+                    <div class="modal-buttons">
+                        <button id="confirm-delete" class="btn-confirm">Confirm</button>
+                        <span id="loader" class="loader" style="display: none;"></span>
+                        <button id="cancel-delete" class="btn-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Confirmation Modal -->
             <div class="card-body px-0 py-0">
                 <div class="border-bottom py-3 px-3 d-sm-flex align-items-center">
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -44,7 +126,7 @@
                         </thead>
                         <tbody>
                             @foreach($companies as $key => $company)
-                            <tr data-status="{{ $company->email_verified_at ? 'verified' : 'pending' }}" data-company-id="{{ $company->id }}">
+                            <tr data-status="{{ $company->email_verified_at ? 'verified' : 'pending' }}" data-company-id="{{ $company->id }}" id="row-{{$company->id}}">
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex align-items-center">
@@ -81,13 +163,7 @@
                                     <span class="text-secondary text-sm font-weight-normal">{{ $company->created_at->toDateString() }}</span>
                                 </td>
                                 <td class="align-middle">
-                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="tooltip" data-bs-title="Edit user">
-                                        <svg width="15" height="15" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M11.2201 2.02495C10.8292 1.63482 10.196 1.63545 9.80585 2.02636C9.41572 2.41727 9.41635 3.05044 9.80726 3.44057L11.2201 2.02495ZM12.5572 6.18502C12.9481 6.57516 13.5813 6.57453 13.9714 6.18362C14.3615 5.79271 14.3609 5.15954 13.97 4.7694L12.5572 6.18502ZM11.6803 1.56839L12.3867 2.2762L12.3867 2.27619L11.6803 1.56839ZM14.4302 4.31284L15.1367 5.02065L15.1367 5.02064L14.4302 4.31284ZM3.72198 15V16C3.98686 16 4.24091 15.8949 4.42839 15.7078L3.72198 15ZM0.999756 15H-0.000244141C-0.000244141 15.5523 0.447471 16 0.999756 16L0.999756 15ZM0.999756 12.2279L0.293346 11.5201C0.105383 11.7077 -0.000244141 11.9624 -0.000244141 12.2279H0.999756ZM9.80726 3.44057L12.5572 6.18502L13.97 4.7694L11.2201 2.02495L9.80726 3.44057ZM12.3867 2.27619C12.7557 1.90794 13.3549 1.90794 13.7238 2.27619L15.1367 0.860593C13.9869 -0.286864 12.1236 -0.286864 10.9739 0.860593L12.3867 2.27619ZM13.7238 2.27619C14.0917 2.64337 14.0917 3.23787 13.7238 3.60504L15.1367 5.02064C16.2875 3.8721 16.2875 2.00913 15.1367 0.860593L13.7238 2.27619ZM13.7238 3.60504L3.01557 14.2922L4.42839 15.7078L15.1367 5.02065L13.7238 3.60504ZM3.72198 14H0.999756V16H3.72198V14ZM1.99976 15V12.2279H-0.000244141V15H1.99976ZM1.70617 12.9357L12.3867 2.2762L10.9739 0.86059L0.293346 11.5201L1.70617 12.9357Z" fill="#64748B" />
-                                        </svg>
-                                    </a>
-                                    
-                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs m-2" data-bs-toggle="tooltip" data-bs-title="Edit user">
+                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs m-2 delete cursor-pointer" data-bs-toggle="tooltip" data-bs-title="Delete user">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6"></polyline>
                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -101,10 +177,10 @@
                     </table>
                 </div>
                 <div class="border-top py-3 px-3 d-flex align-items-center">
-                    <p class="font-weight-semibold mb-0 text-dark text-sm">Page 1 of 10</p>
+                    <p class="font-weight-semibold mb-0 text-dark text-sm paging"></p>
                     <div class="ms-auto">
-                        <button class="btn btn-sm btn-white mb-0">Previous</button>
-                        <button class="btn btn-sm btn-white mb-0">Next</button>
+                        <button class="btn btn-sm btn-white mb-0 previous">Previous</button>
+                        <button class="btn btn-sm btn-white mb-0 next">Next</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +231,54 @@
                 }
             });
         });
+
+        const rows        = Array.from(table.querySelectorAll("tbody tr")); // Get all rows from the table body
+        const rowsPerPage = 10; // Maximum rows per page
+        const totalPages  = Math.ceil(rows.length / rowsPerPage); // Calculate total number of pages
+        let currentPage   = 1; // Default current page
+
+        const pageInfo   = document.querySelector(".paging"); // Page info text
+        const prevButton = document.querySelector(".previous"); // Previous button
+        const nextButton = document.querySelector(".next"); // Next button
+
+        // Function to update the table based on the current page
+        function updateTable() {
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex   = currentPage * rowsPerPage;
+
+            // Hide all rows, then show only the rows for the current page
+            rows.forEach((row, index) => {
+                row.style.display = index >= startIndex && index < endIndex ? "" : "none";
+            });
+
+            // Update the page info text
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Enable/disable pagination buttons based on the current page
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages;
+        }
+
+        // Event listener for the "Previous" button
+        prevButton.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for the "Next" button
+        nextButton.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initialize the table display
+        updateTable();
     });
+
     // Add event listener to the status tags
     document.querySelectorAll('.status-tag').forEach(tag => {
         tag.addEventListener('click', function() {
@@ -224,6 +347,73 @@
                 });
             }
         });
+    });
+
+    // Variables for the modal and buttons
+    const deleteModal = document.getElementById('delete-modal');
+    const confirmDeleteButton = document.getElementById('confirm-delete');
+    const cancelDeleteButton = document.getElementById('cancel-delete');
+    const loader = document.getElementById('loader');
+
+    // Store the company ID to delete
+    let companyIdToDelete = null;
+
+    // Add event listener to the delete buttons
+    document.querySelectorAll('.delete').forEach(tag => {
+        tag.addEventListener('click', function () {
+            // Get the company ID
+            companyIdToDelete = this.closest('tr').dataset.companyId;
+
+            // Show the modal
+            deleteModal.style.display = 'flex';
+        });
+    });
+
+    // Handle the confirm button click
+    confirmDeleteButton.addEventListener('click', function () {
+        if (companyIdToDelete) {
+            // Show loader and hide the confirm button
+            confirmDeleteButton.style.display = 'none';
+            loader.style.display = 'inline-block';
+
+            // Send POST request to delete the company
+            fetch('/api/companies/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ company_id: companyIdToDelete })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // On success, remove the row from the table
+                    const row = document.getElementById(`row-${companyIdToDelete}`);
+                    row.remove();
+                } else {
+                    // Handle failure case
+                    alert('Failed to delete company');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            })
+            .finally(() => {
+                // Hide the modal and reset loader and confirm button
+                deleteModal.style.display = 'none';
+                loader.style.display = 'none';
+                confirmDeleteButton.style.display = 'inline-block';
+                companyIdToDelete = null;
+            });
+        }
+    });
+
+    // Handle the cancel button click
+    cancelDeleteButton.addEventListener('click', function () {
+        // Hide the modal and reset the ID
+        deleteModal.style.display = 'none';
+        companyIdToDelete = null;
     });
 </script>
 @stop

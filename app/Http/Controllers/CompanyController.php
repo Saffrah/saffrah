@@ -73,8 +73,11 @@ class CompanyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        if($this->company_service->delete($request->input())) {
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 400);
     }
 }
