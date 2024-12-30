@@ -58,6 +58,9 @@
         height: 24px;
         animation: spin 2s linear infinite;
     }
+    #yearFilter, #monthFilter {
+        min-width: 150px;
+    }
     @keyframes spin {
         0% {
         transform: rotate(0deg);
@@ -106,6 +109,33 @@
                         <input id="filter-full_course" type="radio" class="btn-check" name="btnradiotable" autocomplete="off">
                         <label class="btn btn-white px-3 mb-0" for="filter-full_course">Full Course</label>
                     </div>
+                    <div class="py-3 px-3 d-sm-flex align-items-center">
+                        <!-- Date Filtration -->
+                        <select id="yearFilter" class="form-select" style="width: 150px;">
+                            <option value="" selected>Year</option>
+                            <!-- Populate with years dynamically -->
+                        </select>
+
+                        <select id="monthFilter" class="form-select" style="width: 150px;">
+                            <option value="" selected>Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+
+                        <button id="filterByDate" class="btn btn-primary mx-2 mb-0">Filter</button>
+                        <button id="resetFilters" class="btn btn-secondary mr-2 mb-0">Reset</button>
+                    </div>
+
                     <div class="input-group w-sm-25 ms-auto">
                         <span class="input-group-text text-body">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -220,7 +250,7 @@
                                     </span>
                                     @endif
                                 </td>
-                                <td class="align-middle text-center">
+                                <td class="align-middle text-center" data-date="{{ $package->created_at->toDateString() }}">
                                     <span class="text-secondary text-sm font-weight-normal">{{ $package->created_at->toDateString() }}</span>
                                 </td>
                                 <td class="align-middle text-center">
@@ -254,97 +284,155 @@
 @stop
 @section('JavaScript')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Select all filter buttons
-        const filterAll = document.getElementById('filter-all');
-        const filterBasic = document.getElementById('filter-basic');
-        const filterHalfBoard = document.getElementById('filter-half_board');
-        const filterFullCourse = document.getElementById('filter-full_course');
-        const searchInput = document.getElementById('searchInput');
-        const table = document.getElementById('PackagesTable');
-        const tableRows = Array.from(table.querySelectorAll('tbody tr')); // Get all rows from the table body
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterAll        = document.getElementById("filter-all");
+        const filterBasic      = document.getElementById("filter-basic");
+        const filterHalfBoard  = document.getElementById("filter-half_board");
+        const filterFullCourse = document.getElementById("filter-full_course");
 
-        let filteredRows = [...tableRows]; // Rows currently visible (filtered or searched)
-        let currentFilter = 'all'; // Keep track of the active filter
-        const rowsPerPage = 10; // Maximum rows per page
-        let currentPage = 1; // Default current page
+        const searchInput      = document.getElementById("searchInput");
+        const table            = document.getElementById("PackagesTable");
+        const tableRows        = Array.from(table.querySelectorAll("tbody tr"));
+    
+        const yearFilter       = document.getElementById("yearFilter");
+        const monthFilter      = document.getElementById("monthFilter");
+        const filterButton     = document.getElementById("filterByDate");
+    
+        const pageInfo         = document.querySelector(".paging");
+        const prevButton       = document.querySelector(".previous");
+        const nextButton       = document.querySelector(".next");
 
-        const pageInfo = document.querySelector('.paging'); // Page info text
-        const prevButton = document.querySelector('.previous'); // Previous button
-        const nextButton = document.querySelector('.next'); // Next button
+        let filteredRows  = [...tableRows]; // Rows currently visible (filtered or searched)
+        let currentFilter = "all"; // Current filter type
+        let currentPage   = 1;
+        const rowsPerPage = 10;
 
-        // Function to update the table based on the current page
-        function updateTable() {
+        // Populate year dropdown based on available data
+        const populateYears = () => {
+            const years = new Set();
+            tableRows.forEach(row => {
+                const dateCell = row.querySelector("td[data-date]");
+                if (dateCell) {
+                    const year = dateCell.getAttribute("data-date").slice(0, 4); // Extract year from "YYYY-MM-DD"
+                    years.add(year);
+                }
+            });
+
+            // Sort years in descending order
+            Array.from(years).sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement("option");
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            });
+        };
+
+        // Function to update the table display based on the current page
+        const updateTable = () => {
             const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
             const startIndex = (currentPage - 1) * rowsPerPage;
             const endIndex = currentPage * rowsPerPage;
 
-            // Hide all rows, then show only the rows for the current page
-            tableRows.forEach(row => (row.style.display = 'none')); // Hide all rows
-            filteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = '')); // Show filtered rows for the current page
+            tableRows.forEach(row => (row.style.display = "none")); // Hide all rows
+            filteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = "")); // Show only rows for the current page
 
-            // Update the page info text
             pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-            // Enable/disable pagination buttons based on the current page
             prevButton.disabled = currentPage === 1;
             nextButton.disabled = currentPage === totalPages || totalPages === 0;
-        }
+        };
 
-        // Function to filter rows based on the selected filter
-        function filterTable(filterType) {
-            currentFilter = filterType; // Update the current filter
+        // Filter table by type (e.g., all, basic)
+        const filterTable = filterType => {
+            currentFilter = filterType;
             filteredRows = tableRows.filter(row => {
-                const status = row.getAttribute('data-status');
-                return filterType === 'all' || status === filterType;
+                const status = row.getAttribute("data-status");
+                return filterType === "all" || status === filterType;
             });
 
             // Apply search on top of the filtered rows
             searchTable();
 
-            currentPage = 1; // Reset to the first page after filtering
-            updateTable(); // Update the table display
-        }
+            currentPage = 1;
+            updateTable();
+        };
 
-        // Function to search within the current filtered rows
-        function searchTable() {
+        // Search table within the current filtered rows
+        const searchTable = () => {
             const query = searchInput.value.toLowerCase().trim();
-
-            // Filter the rows based on the current filter and search query
             filteredRows = tableRows.filter(row => {
-                const status = row.getAttribute('data-status');
+                const status = row.getAttribute("data-status");
                 const packageName = row.cells[2].textContent.toLowerCase();
-                const matchesFilter = currentFilter === 'all' || status === currentFilter;
+                const matchesFilter = currentFilter === "all" || status === currentFilter;
                 const matchesSearch = packageName.includes(query);
 
-                return matchesFilter && matchesSearch; // Row must satisfy both filter and search criteria
+                return matchesFilter && matchesSearch;
             });
 
-            currentPage = 1; // Reset to the first page after searching
-            updateTable(); // Update the table display
-        }
+            currentPage = 1;
+            updateTable();
+        };
 
-        // Add event listeners to the filter buttons
-        filterAll.addEventListener('change', () => filterTable('all'));
-        filterBasic.addEventListener('change', () => filterTable('basic'));
-        filterHalfBoard.addEventListener('change', () => filterTable('half_board'));
-        filterFullCourse.addEventListener('change', () => filterTable('full_course'));
+        // Filter table by date
+        const filterTableByDate = (year, month) => {
+            const formattedDate = `${year}-${month}`;
+            filteredRows = filteredRows.filter(row => {
+                const dateCell = row.querySelector("td[data-date]");
+                if (dateCell) {
+                    const cellDate = dateCell.getAttribute("data-date").slice(0, 7); // Get "YYYY-MM"
+                    return cellDate === formattedDate;
+                }
+                return false;
+            });
 
-        // Add event listener to the search input
-        searchInput.addEventListener('input', function () {
+            currentPage = 1;
+            updateTable();
+        };
+
+        // Reset filters to show the original table
+        const resetFilters = () => {
+            yearFilter.value = "";
+            monthFilter.value = "";
+            
+            // Reapply the current filter and search
+            filterTable(currentFilter);
             searchTable();
+            currentPage = 1;
+            updateTable();
+        };
+
+        // Event listener for filter buttons
+        filterAll.addEventListener("click", () => filterTable("all"));
+        filterBasic.addEventListener("click", () => filterTable("basic"));
+        filterHalfBoard.addEventListener("click", () => filterTable("half_board"));
+        filterFullCourse.addEventListener("click", () => filterTable("full_course"));
+        
+        document.getElementById("resetFilters").addEventListener("click", resetFilters);
+
+        // Event listener for search input
+        searchInput.addEventListener("input", searchTable);
+
+        // Event listener for date filter
+        filterButton.addEventListener("click", () => {
+            const selectedYear = yearFilter.value;
+            const selectedMonth = monthFilter.value;
+
+            if (!selectedYear || !selectedMonth) {
+                alert("Please select both a year and a month!");
+                return;
+            }
+
+            filterTableByDate(selectedYear, selectedMonth);
         });
 
-        // Event listener for the "Previous" button
-        prevButton.addEventListener('click', () => {
+        // Event listener for pagination buttons
+        prevButton.addEventListener("click", () => {
             if (currentPage > 1) {
                 currentPage--;
                 updateTable();
             }
         });
 
-        // Event listener for the "Next" button
-        nextButton.addEventListener('click', () => {
+        nextButton.addEventListener("click", () => {
             const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
             if (currentPage < totalPages) {
                 currentPage++;
@@ -352,11 +440,10 @@
             }
         });
 
-        // Initialize the table display
+        // Initialize table and populate year filter
+        populateYears();
         updateTable();
     });
-
-
 
     // Variables for the modal and buttons
     const deleteModal = document.getElementById('delete-modal');
