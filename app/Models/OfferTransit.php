@@ -21,7 +21,7 @@ class OfferTransit extends Model
         return $this->belongsTo(Offer::class);    
     }
 
-    public function to_city() 
+    public function To() 
     {
         return $this->belongsTo(City::class, 'to_city');    
     }

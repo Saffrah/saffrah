@@ -3,19 +3,22 @@
 namespace App\Domains\Packages\Services;
 
 use App\Domains\Auth\Repositories\AuthRepository;
+use App\Domains\FileManager\Repositories\FileManagerRepository;
 use App\Domains\Packages\Repositories\PackageRepository;
 use App\Notifications\UserOfferAcceptedNotification;
 use Illuminate\Support\Facades\Notification;
 
 class PackageService
 {
+    private $file_manager_repository;
     private $package_repository;
     private $auth_repository;
 
-    public function __construct(PackageRepository $package_repository, AuthRepository $auth_repository) 
+    public function __construct(PackageRepository $package_repository, AuthRepository $auth_repository, FileManagerRepository $file_manager_repository) 
     {
-        $this->package_repository = $package_repository;
-        $this->auth_repository    = $auth_repository;
+        $this->file_manager_repository = $file_manager_repository;
+        $this->package_repository      = $package_repository;
+        $this->auth_repository         = $auth_repository;
     }
 
     public function cities_list() 
@@ -230,6 +233,11 @@ class PackageService
         $results = $this->package_repository->deals($user->id);
         
         if($results) {
+
+            foreach ($results as $key => $deal) {
+                $results[$key]['user_docs'] = $this->file_manager_repository->getUserDocs($user->id, $deal['id'], $deal['confirmed_no_of_guests']); 
+            }
+
             return [
                 'response_code'    => 200,
                 'response_message' => 'Deals retrieved successfully !', 

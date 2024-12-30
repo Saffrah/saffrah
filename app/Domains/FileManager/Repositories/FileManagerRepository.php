@@ -43,5 +43,14 @@ class FileManagerRepository
         return $this->model->create($array);
     }
 
+    public function getUserDocs($user_id, $package_id, $no_of_guests) 
+    {
+        $count = $this->model->where('model_id', $user_id)
+                             ->where('model_type', 'user')
+                             ->where('package_id', $package_id)->count();
+        
+        return ($count/$no_of_guests) >= 2;
+    }
+
 }
     

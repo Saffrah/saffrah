@@ -11,6 +11,6 @@ class City extends Model
 
     public function Packages() 
     {
-        return $this->hasMany(Package::class, 'to_city')->whereNull('user_id');    
+        return $this->hasMany(Package::class, 'to_city')->whereNull('user_id')->whereNull('deleted_at');    
     }
 }

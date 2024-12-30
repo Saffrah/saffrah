@@ -24,7 +24,7 @@ class Transit extends Model
         return $this->belongsTo(Package::class);    
     }
 
-    public function to_city() 
+    public function To() 
     {
         return $this->belongsTo(City::class, 'to_city');    
     }

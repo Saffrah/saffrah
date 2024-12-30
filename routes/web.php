@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\AdminController;
 use App\Http\Middleware\AdminMiddleware;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,4 +22,5 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.get');
+    Route::get('/packages', [PackageController::class, 'index'])->name('packages.get');
 });
