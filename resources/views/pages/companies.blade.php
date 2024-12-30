@@ -192,28 +192,48 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Select all filter buttons
-        const filterAll      = document.getElementById('filter-all');
+        const filterAll = document.getElementById('filter-all');
         const filterVerified = document.getElementById('filter-verified');
-        const filterPending  = document.getElementById('filter-pending');
-        const tableRows      = document.querySelectorAll('tbody tr');
+        const filterPending = document.getElementById('filter-pending');
+        const tableRows = Array.from(document.querySelectorAll('tbody tr'));
+        
+        const rowsPerPage = 10; // Maximum rows per page
+        let filteredRows = [...tableRows]; // Rows currently visible (filtered or all)
+        let currentPage = 1; // Default current page
+
+        const pageInfo = document.querySelector('.paging'); // Page info text
+        const prevButton = document.querySelector('.previous'); // Previous button
+        const nextButton = document.querySelector('.next'); // Next button
+
+        // Function to update the table based on the current page
+        function updateTable() {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = currentPage * rowsPerPage;
+
+            // Hide all rows, then show only the rows for the current page
+            tableRows.forEach(row => row.style.display = 'none'); // Hide all rows
+            filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = ''); // Show filtered rows for the current page
+
+            // Update the page info text
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Enable/disable pagination buttons based on the current page
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages || totalPages === 0;
+        }
 
         // Function to filter rows based on the selected filter
         function filterTable(filterType) {
-            tableRows.forEach(row => {
-                const status = row.getAttribute('data-status');
+            if (filterType === 'all') {
+                filteredRows = [...tableRows]; // Show all rows
+            } else {
+                filteredRows = tableRows.filter(row => row.getAttribute('data-status') === filterType); // Filter rows
+            }
 
-                if (filterType === 'all' || status === filterType) {
-                    row.style.display = ''; // Show row
-                } else {
-                    row.style.display = 'none'; // Hide row
-                }
-            });
+            currentPage = 1; // Reset to the first page after filtering
+            updateTable(); // Update the table display
         }
-
-        // Add event listeners to the radio buttons
-        filterAll.addEventListener('change', () => filterTable('all'));
-        filterVerified.addEventListener('change', () => filterTable('verified'));
-        filterPending.addEventListener('change', () => filterTable('pending'));
 
         const searchInput = document.getElementById('searchInput');
         const table       = document.getElementById('companiesTable');
@@ -232,35 +252,13 @@
             });
         });
 
-        const rows        = Array.from(table.querySelectorAll("tbody tr")); // Get all rows from the table body
-        const rowsPerPage = 10; // Maximum rows per page
-        const totalPages  = Math.ceil(rows.length / rowsPerPage); // Calculate total number of pages
-        let currentPage   = 1; // Default current page
-
-        const pageInfo   = document.querySelector(".paging"); // Page info text
-        const prevButton = document.querySelector(".previous"); // Previous button
-        const nextButton = document.querySelector(".next"); // Next button
-
-        // Function to update the table based on the current page
-        function updateTable() {
-            const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex   = currentPage * rowsPerPage;
-
-            // Hide all rows, then show only the rows for the current page
-            rows.forEach((row, index) => {
-                row.style.display = index >= startIndex && index < endIndex ? "" : "none";
-            });
-
-            // Update the page info text
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-            // Enable/disable pagination buttons based on the current page
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === totalPages;
-        }
+        // Add event listeners to the filter buttons
+        filterAll.addEventListener('change', () => filterTable('all'));
+        filterVerified.addEventListener('change', () => filterTable('verified'));
+        filterPending.addEventListener('change', () => filterTable('pending'));
 
         // Event listener for the "Previous" button
-        prevButton.addEventListener("click", () => {
+        prevButton.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
                 updateTable();
@@ -268,7 +266,8 @@
         });
 
         // Event listener for the "Next" button
-        nextButton.addEventListener("click", () => {
+        nextButton.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
             if (currentPage < totalPages) {
                 currentPage++;
                 updateTable();
