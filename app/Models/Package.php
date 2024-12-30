@@ -34,17 +34,22 @@ class Package extends Model
         return $this->belongsTo(Company::class);    
     }
 
+    public function User() 
+    {
+        return $this->belongsTo(User::class);    
+    }
+
     public function Transits() 
     {
         return $this->hasMany(Transit::class);    
     }
 
-    public function from_city() 
+    public function From() 
     {
         return $this->belongsTo(City::class, 'from_city');    
     }
 
-    public function to_city() 
+    public function To() 
     {
         return $this->belongsTo(City::class, 'to_city');    
     }

@@ -73,7 +73,7 @@ class PackageRepository
 
     public function by_id($id) 
     {
-        return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->first();   
+        return $this->model->where('id', $id)->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])->first();   
     }
 
     public function get_one_by_company_id($company_id, $package_id) 
@@ -83,12 +83,12 @@ class PackageRepository
 
     function by_company_id($id) 
     {
-        return $this->model->where('company_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])->get();    
+        return $this->model->where('company_id', $id)->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])->get();    
     }
 
     public function all($request) 
     {
-        $query = $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files']);
+        $query = $this->model->with(['Transits', 'Transits.To', 'From', 'To', 'Files']);
         
         if (isset($request['is_cruise'])) {
             $query->where('is_cruise', $request['is_cruise']);
@@ -110,8 +110,10 @@ class PackageRepository
             $cities = $this->city_model->join('countries', 'countries.id', 'cities.country_id')
                                        ->join('packages', 'packages.to_city', 'cities.id')
                                        ->select('cities.*')
-                                       ->with(['packages', 'packages.Company', 'packages.Transits', 'packages.from_city', 'packages.to_city', 'packages.Files', 'packages.Transits.to_city'])
-                                       ->where('countries.id', $country['id']);
+                                       ->with(['packages', 'packages.Company', 'packages.Transits', 'packages.From', 'packages.To', 'packages.Files', 'packages.Transits.To'])
+                                       ->where('countries.id', $country['id'])
+                                       ->whereNull('packages.user_id')
+                                       ->whereNull('packages.deleted_at');
 
             if(isset($request['is_cruise'])) {
                 $cities = $cities->where('packages.is_cruise', $request['is_cruise']);
@@ -213,7 +215,7 @@ class PackageRepository
     {
         return $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
                            ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                           ->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])
+                           ->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])
                            ->where('package_confirms.user_id', $user_id)
                            ->get()
                            ->toArray();    
@@ -221,7 +223,7 @@ class PackageRepository
 
     public function all_user_packages($user_id) 
     {
-        return $this->model->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])
+        return $this->model->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])
                            ->where('user_id', $user_id)
                            ->get()
                            ->toArray();    

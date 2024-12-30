@@ -25,7 +25,7 @@ class CompanyRepository
     {
         return $this->package_model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
                                    ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                                   ->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Files'])
+                                   ->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])
                                    ->where('packages.company_id', $company_id)
                                    ->get()
                                    ->toArray();    

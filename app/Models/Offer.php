@@ -36,12 +36,12 @@ class Offer extends Model
         return $this->hasMany(OfferTransit::class);    
     }
 
-    public function from_city() 
+    public function From() 
     {
         return $this->belongsTo(City::class, 'from_city');    
     }
 
-    public function to_city() 
+    public function To() 
     {
         return $this->belongsTo(City::class, 'to_city');  
     }

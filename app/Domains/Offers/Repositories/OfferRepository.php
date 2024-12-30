@@ -38,17 +38,17 @@ class OfferRepository
 
     public function by_id($id) 
     {
-        return $this->model->where('id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city', 'Packages', 'Packages.Transits', 'Packages.Transits.To_city', 'Packages.From_city', 'Packages.To_city', 'Packages.Files'])->first();   
+        return $this->model->where('id', $id)->with(['Transits', 'Transits.To', 'From', 'To', 'Packages', 'Packages.Transits', 'Packages.Transits.To', 'Packages.From', 'Packages.To', 'Packages.Files'])->first();   
     }
 
     function by_user_id($id) 
     {
-        return $this->model->where('user_id', $id)->with(['Transits', 'Transits.to_city', 'from_city', 'to_city'])->get();    
+        return $this->model->where('user_id', $id)->with(['Transits', 'Transits.To', 'From', 'To'])->get();    
     }
 
     public function all() 
     {
-        return $this->model->with(['User', 'Transits', 'Transits.to_city', 'from_city', 'to_city'])->get();
+        return $this->model->with(['User', 'Transits', 'Transits.To', 'From', 'To'])->get();
     }
 
 
