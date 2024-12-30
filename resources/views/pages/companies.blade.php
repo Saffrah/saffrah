@@ -195,10 +195,13 @@
         const filterAll = document.getElementById('filter-all');
         const filterVerified = document.getElementById('filter-verified');
         const filterPending = document.getElementById('filter-pending');
-        const tableRows = Array.from(document.querySelectorAll('tbody tr'));
-        
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('companiesTable');
+        const tableRows = Array.from(table.querySelectorAll('tbody tr')); // Get all rows from the table body
+
+        let filteredRows = [...tableRows]; // Rows currently visible (filtered or searched)
+        let currentFilter = 'all'; // Keep track of the active filter
         const rowsPerPage = 10; // Maximum rows per page
-        let filteredRows = [...tableRows]; // Rows currently visible (filtered or all)
         let currentPage = 1; // Default current page
 
         const pageInfo = document.querySelector('.paging'); // Page info text
@@ -212,8 +215,8 @@
             const endIndex = currentPage * rowsPerPage;
 
             // Hide all rows, then show only the rows for the current page
-            tableRows.forEach(row => row.style.display = 'none'); // Hide all rows
-            filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = ''); // Show filtered rows for the current page
+            tableRows.forEach(row => (row.style.display = 'none')); // Hide all rows
+            filteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = '')); // Show filtered rows for the current page
 
             // Update the page info text
             pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
@@ -225,37 +228,46 @@
 
         // Function to filter rows based on the selected filter
         function filterTable(filterType) {
-            if (filterType === 'all') {
-                filteredRows = [...tableRows]; // Show all rows
-            } else {
-                filteredRows = tableRows.filter(row => row.getAttribute('data-status') === filterType); // Filter rows
-            }
+            currentFilter = filterType; // Update the current filter
+            filteredRows = tableRows.filter(row => {
+                const status = row.getAttribute('data-status');
+                return filterType === 'all' || status === filterType;
+            });
+
+            // Apply search on top of the filtered rows
+            searchTable();
 
             currentPage = 1; // Reset to the first page after filtering
             updateTable(); // Update the table display
         }
 
-        const searchInput = document.getElementById('searchInput');
-        const table       = document.getElementById('companiesTable');
+        // Function to search within the current filtered rows
+        function searchTable() {
+            const query = searchInput.value.toLowerCase().trim();
 
-        // Add event listener to search input
-        searchInput.addEventListener('input', function () {
-            const query = searchInput.value.toLowerCase(); // Get search value (case insensitive)
+            // Filter the rows based on the current filter and search query
+            filteredRows = tableRows.filter(row => {
+                const status = row.getAttribute('data-status');
+                const companyName = row.cells[0].textContent.toLowerCase();
+                const matchesFilter = currentFilter === 'all' || status === currentFilter;
+                const matchesSearch = companyName.includes(query);
 
-            tableRows.forEach((row) => {
-                const companyName = row.cells[0].textContent.toLowerCase(); // Get company name (first column)
-                if (companyName.includes(query)) {
-                    row.style.display = ''; // Show row
-                } else {
-                    row.style.display = 'none'; // Hide row
-                }
+                return matchesFilter && matchesSearch; // Row must satisfy both filter and search criteria
             });
-        });
+
+            currentPage = 1; // Reset to the first page after searching
+            updateTable(); // Update the table display
+        }
 
         // Add event listeners to the filter buttons
         filterAll.addEventListener('change', () => filterTable('all'));
         filterVerified.addEventListener('change', () => filterTable('verified'));
         filterPending.addEventListener('change', () => filterTable('pending'));
+
+        // Add event listener to the search input
+        searchInput.addEventListener('input', function () {
+            searchTable();
+        });
 
         // Event listener for the "Previous" button
         prevButton.addEventListener('click', () => {
@@ -277,6 +289,7 @@
         // Initialize the table display
         updateTable();
     });
+
 
     // Add event listener to the status tags
     document.querySelectorAll('.status-tag').forEach(tag => {
