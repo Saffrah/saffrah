@@ -48,6 +48,27 @@
         @yield('JavaScript')
         
         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get all nav-link elements
+                const navLinks = document.querySelectorAll(".nav-link");
+
+                // Remove "active" class from all links and set it to the current one based on URL
+                navLinks.forEach(link => {
+                    // Check if the href of the link matches the current URL
+                    if (link.href === window.location.href) {
+                        link.classList.add("active");
+                    } else {
+                        link.classList.remove("active");
+                    }
+
+                    // Add click event listener for client-side navigation
+                    link.addEventListener("click", function () {
+                        navLinks.forEach(l => l.classList.remove("active")); // Remove "active" from others
+                        this.classList.add("active"); // Add "active" to the clicked link
+                    });
+                });
+            });
+
             var win = navigator.platform.indexOf('Win') > -1;
             if (win && document.querySelector('#sidenav-scrollbar')) {
                 var options = {
