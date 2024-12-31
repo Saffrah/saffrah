@@ -241,7 +241,7 @@ class PackageService
             return [
                 'response_code'    => 200,
                 'response_message' => 'Deals retrieved successfully !', 
-                'response_data'    => $results
+                'response_data'    => $results->toArray()
             ];
         }
 
