@@ -120,7 +120,7 @@ class PackageRepository
             }
                                        
             if($cities) {
-                $countries[$key]['cities'] = $cities->groupBy('cities.id')->get()->toArray();
+                $countries[$key]['cities'] = $cities->groupBy('cities.id')->get();
             }
         }
 
