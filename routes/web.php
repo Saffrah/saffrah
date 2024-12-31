@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OfferController;
 use App\Http\Middleware\AdminMiddleware;
 
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,5 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.get');
     Route::get('/packages', [PackageController::class, 'index'])->name('packages.get');
+    Route::get('/offers', [OfferController::class, 'index'])->name('offers.get');
 });

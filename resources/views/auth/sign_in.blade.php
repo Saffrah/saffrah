@@ -8,7 +8,7 @@
             <nav class="navbar navbar-expand-lg blur border-radius-sm top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
                 <div class="container-fluid px-1">
                     <a class="navbar-brand font-weight-bolder ms-lg-0 " href="../pages/dashboard.html">
-                        Easy Trip
+                        Next Trip
                     </a>
                     <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon mt-2">
@@ -91,8 +91,8 @@
                         <div class="position-absolute w-40 top-0 end-0 h-100 d-md-block d-none">
                             <div class="oblique-image position-absolute fixed-top ms-auto h-100 z-index-0 bg-cover ms-n8" style="background-image:url('../assets/img/image-sign-in.jpg')">
                                 <div class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
-                                    <h2 class="mt-3 text-dark font-weight-bold">Easy Trip Admin Panel</h2>
-                                    <h6 class="text-dark text-sm mt-5">Copyright All Rights reserved © 2024 for Easy Trip</h6>
+                                    <h2 class="mt-3 text-dark font-weight-bold">Next Trip Admin Panel</h2>
+                                    <h6 class="text-dark text-sm mt-5">Copyright All Rights reserved © 2024 for Next Trip</h6>
                                 </div>
                             </div>
                         </div>

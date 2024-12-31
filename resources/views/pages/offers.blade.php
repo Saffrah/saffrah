@@ -3,6 +3,36 @@
 @section('CSS')
 <!-- Add this to your CSS -->
 <style>
+    /* Apply to all table cells */
+    .includes div.d-flex.flex-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .includes div.d-flex.justify-content-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px; /* Add space between labels and values */
+    }
+
+    .includes div.d-flex.justify-content-between h6.label {
+        width: 70px; /* Fixed width to align the labels in a column */
+        margin: 0;
+        font-weight: 600;
+        text-align: left; /* Ensure text aligns to the left */
+    }
+
+    .includes div.d-flex.justify-content-between h6.value {
+        margin: 0;
+        font-weight: 400;
+        text-align: right; /* Ensure values align to the right */
+    }
+
+    .includes div.d-flex.flex-column h6 {
+        margin-bottom: 4px; /* Add consistent spacing between rows */
+    }
+
     .modal {
         display: none; /* Hidden by default */
         position: fixed;
@@ -79,8 +109,8 @@
             <div class="card-header border-bottom pb-0">
                 <div class="d-sm-flex align-items-center">
                     <div>
-                        <h6 class="font-weight-semibold text-lg mb-0">Packages list</h6>
-                        <p class="text-sm">See information about all Packages</p>
+                        <h6 class="font-weight-semibold text-lg mb-0">Requests list</h6>
+                        <p class="text-sm">See information about all Requests</p>
                     </div>
                 </div>
             </div>
@@ -88,7 +118,7 @@
             <div id="delete-modal" class="modal">
                 <div class="modal-content">
                     <h3>Confirm Deletion</h3>
-                    <p>Are you sure you want to delete this Package ?</p>
+                    <p>Are you sure you want to delete this Request ?</p>
                     <div class="modal-buttons">
                         <button id="confirm-delete" class="btn-confirm">Confirm</button>
                         <span id="loader" class="loader" style="display: none;"></span>
@@ -99,7 +129,7 @@
             <!-- Confirmation Modal -->
             <div class="card-body px-0 py-0">
                 <div class="border-bottom py-3 px-3 d-sm-flex align-items-center">
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <!-- <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                         <input id="filter-all" type="radio" class="btn-check" name="btnradiotable" autocomplete="off" checked>
                         <label class="btn btn-white px-3 mb-0" for="filter-all">All</label>
                         <input id="filter-basic" type="radio" class="btn-check" name="btnradiotable" autocomplete="off">
@@ -108,7 +138,7 @@
                         <label class="btn btn-white px-3 mb-0" for="filter-half_board">Half Board</label>
                         <input id="filter-full_course" type="radio" class="btn-check" name="btnradiotable" autocomplete="off">
                         <label class="btn btn-white px-3 mb-0" for="filter-full_course">Full Course</label>
-                    </div>
+                    </div> -->
                     <div class="py-3 px-3 d-sm-flex align-items-center">
                         <!-- Date Filtration -->
                         <select id="yearFilter" class="form-select" style="width: 150px;">
@@ -116,7 +146,7 @@
                             <!-- Populate with years dynamically -->
                         </select>
 
-                        <select id="monthFilter" class="form-select" style="width: 150px;">
+                        <select id="monthFilter" class="mx-2 form-select" style="width: 150px;">
                             <option value="" selected>Month</option>
                             <option value="01">January</option>
                             <option value="02">February</option>
@@ -146,115 +176,130 @@
                     </div>
                 </div>
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0" id="PackagesTable">
+                    <table class="table align-items-center mb-0" id="OffersTable">
                         <thead class="bg-gray-100">
                             <tr style="text-align: center;">
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7">By Company</th>
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7">For User</th>
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Package Name</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7">By User</th>
                                 <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">From City</th>
                                 <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">To City</th>
                                 <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Number of Nights</th>
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Price / Person</th>
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Hotel Name</th>
-                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Discription</th>
-                                <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Reservation Type</th>
-                                <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Is Cruise</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Number of Guests</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Tript Duration</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Max Price / Person</th>
+                                <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Includes</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Notes</th>
                                 <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Created At</th>
-                                <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Ends At</th>
                                 <th class="text-secondary opacity-7"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($packages as $key => $package)
-                            <tr data-status="@if($package->reservation_type == 1){{'basic'}}@elseif($package->reservation_type == 2){{'half_board'}}@elseif($package->reservation_type == 3){{'full_course'}}@endif" data-company-id="{{ $package->id }}" id="row-{{$package->id}}">
+                            @foreach($offers as $key => $offer)
+                            <tr data-status="@if($offer->reservation_type == 1){{'basic'}}@elseif($offer->reservation_type == 2){{'half_board'}}@elseif($offer->reservation_type == 3){{'full_course'}}@endif" data-company-id="{{ $offer->id }}" id="row-{{$offer->id}}">
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex align-items-center">
                                             <img src="../assets/img/team-2.jpg" class="avatar avatar-sm rounded-circle me-2" alt="user1">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center ms-1">
-                                            <h6 class="mb-0 text-sm font-weight-semibold">{{ $package->company->name }}</h6>
-                                            <p class="text-sm text-secondary mb-0">{{ $package->company->email }}</p>
+                                            <h6 class="mb-0 text-sm font-weight-semibold">{{ $offer->User->name }}</h6>
+                                            <p class="text-sm text-secondary mb-0">{{ $offer->User->email }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex px-2 py-1">
-                                        @if($package->User)
-                                        <div class="d-flex flex-column justify-content-center ms-1">
-                                            <h6 class="mb-0 text-sm font-weight-semibold">{{ $package->User->name }}</h6>
-                                            <p class="text-sm text-secondary mb-0">{{ $package->User->email }}</p>
-                                        </div>
-                                        @else 
-                                        <div class="d-flex flex-column justify-content-center ms-1">
-                                            <h6 class="mb-0 text-sm font-weight-semibold">General</h6>
-                                        </div>
-                                        @endif
-                                    </div>
+                                    <p class="text-sm text-dark font-weight-semibold mb-0">From: {{ $offer->From->name }}</p>
                                 </td>
                                 <td>
+                                    <p class="text-sm text-dark font-weight-semibold mb-0">To: {{ $offer->To->name }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $offer->no_of_nights }}</p>
+                                </td>
+                                <td class="includes">
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex flex-column justify-content-center ms-1">
-                                            <h6 class="mb-0 text-sm font-weight-semibold">{{ $package->name }}</h6>
-                                            <p class="text-sm text-secondary mb-0">{{ $package->name_ar }}</p>
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <h6 class="mb-0 text-sm font-weight-semibold label">Adults:</h6>
+                                                <h6 class="mb-0 text-sm value">{{ $offer->no_of_adults }}</h6>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <h6 class="mb-0 text-sm font-weight-semibold label">Children:</h6>
+                                                <h6 class="mb-0 text-sm value">{{ $offer->no_of_children }}</h6>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <p class="text-sm text-dark font-weight-semibold mb-0">From: {{ $package->From->name }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-sm text-dark font-weight-semibold mb-0">To: {{ $package->To->name }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $package->no_of_nights }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $package->price_per_person }}</p>
-                                </td>
-                                <td>
+                                <td class="includes">
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex flex-column justify-content-center ms-1">
-                                            <h6 class="mb-0 text-sm font-weight-semibold">{{ $package->hotel_name }}</h6>
-                                            <p class="text-sm text-secondary mb-0">{{ $package->hotel_name_ar }}</p>
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <h6 class="mb-0 text-sm font-weight-semibold label">Start Date:</h6>
+                                                <h6 class="mb-0 text-sm value">{{ $offer->start_date }}</h6>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <h6 class="mb-0 text-sm font-weight-semibold label">End Date:</h6>
+                                                <h6 class="mb-0 text-sm value">{{ $offer->end_date }}</h6>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-sm text-dark font-weight-semibold mb-0">{{ $package->description }}</p>
+                                    <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $offer->max_price }}</p>
                                 </td>
-                                <td class="align-middle text-center text-sm">
-                                    @if($package->reservation_type == 1)
-                                    <span class="badge badge-sm border border-secondary text-secondary bg-secondary reservation">
-                                        Basic
-                                    </span>
-                                    @elseif($package->reservation_type == 2)
-                                    <span class="badge badge-sm border border-warning text-warning bg-warning reservation">
-                                        Half Board
-                                    </span>
-                                    @elseif($package->reservation_type == 3)
-                                    <span class="badge badge-sm border border-success text-success bg-success reservation">
-                                        Full Course
-                                    </span>
-                                    @endif
+                                <td class="includes">
+                                    <div class="d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <h6 class="mb-0 text-sm font-weight-semibold label">Tickets:</h6>
+                                            @if($offer->including_tickets)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#d4edda"></circle>
+                                                <polyline points="9 12 12 15 16 9"></polyline>
+                                            </svg>
+                                            @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#f8d7da"></circle>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                            </svg>
+                                            @endif
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <h6 class="mb-0 text-sm font-weight-semibold label">Hotels:</h6>
+                                            @if($offer->including_hotels)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#d4edda"></circle>
+                                                <polyline points="9 12 12 15 16 9"></polyline>
+                                            </svg>
+                                            @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#f8d7da"></circle>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                            </svg>
+                                            @endif
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h6 class="mb-0 text-sm font-weight-semibold label">Program:</h6>
+                                            @if($offer->including_program)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#d4edda"></circle>
+                                                <polyline points="9 12 12 15 16 9"></polyline>
+                                            </svg>
+                                            @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="value" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10" fill="#f8d7da"></circle>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                            </svg>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="align-middle text-center text-sm">
-                                    @if($package->is_cruise)
-                                    <span class="badge badge-sm border border-primary text-primary bg-primary">
-                                        Cruise
-                                    </span>
-                                    @else
-                                    <span class="badge badge-sm border border-info text-info bg-info">
-                                        Regular
-                                    </span>
-                                    @endif
+                                <td>
+                                    <p class="text-sm text-dark font-weight-semibold mb-0">{{ $offer->note }}</p>
                                 </td>
-                                <td class="align-middle text-center" data-date="{{ $package->created_at->toDateString() }}">
-                                    <span class="text-secondary text-sm font-weight-normal">{{ $package->created_at->toDateString() }}</span>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <span class="text-secondary text-sm font-weight-normal">{{ $package->end_date ? date("Y-m-d", strtotime($package->end_date)) : "" }}</span>
+                                <td class="align-middle text-center" data-date="{{ $offer->created_at->toDateString() }}">
+                                    <span class="text-secondary text-sm font-weight-normal">{{ $offer->created_at->toDateString() }}</span>
                                 </td>
                                 <td class="align-middle text-center">
                                     <a href="javascript:;" class="text-secondary font-weight-bold text-xs m-2 delete cursor-pointer" data-bs-toggle="tooltip" data-bs-title="Delete user">
@@ -285,13 +330,13 @@
 @section('JavaScript')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const filterAll        = document.getElementById("filter-all");
-        const filterBasic      = document.getElementById("filter-basic");
-        const filterHalfBoard  = document.getElementById("filter-half_board");
-        const filterFullCourse = document.getElementById("filter-full_course");
+        // const filterAll        = document.getElementById("filter-all");
+        // const filterBasic      = document.getElementById("filter-basic");
+        // const filterHalfBoard  = document.getElementById("filter-half_board");
+        // const filterFullCourse = document.getElementById("filter-full_course");
 
         const searchInput      = document.getElementById("searchInput");
-        const table            = document.getElementById("PackagesTable");
+        const table            = document.getElementById("OffersTable");
         const tableRows        = Array.from(table.querySelectorAll("tbody tr"));
     
         const yearFilter       = document.getElementById("yearFilter");
@@ -360,12 +405,12 @@
         const searchTable = () => {
             const query = searchInput.value.toLowerCase().trim();
             filteredRows = tableRows.filter(row => {
-                const status = row.getAttribute("data-status");
-                const packageName = row.cells[2].textContent.toLowerCase();
-                const matchesFilter = currentFilter === "all" || status === currentFilter;
-                const matchesSearch = packageName.includes(query);
+                // const status        = row.getAttribute("data-status");
+                const offerName     = row.cells[0].textContent.toLowerCase();
+                // const matchesFilter = currentFilter === "all" || status === currentFilter;
+                const matchesSearch = offerName.includes(query);
 
-                return matchesFilter && matchesSearch;
+                return matchesSearch; // matchesFilter &&;
             });
 
             currentPage = 1;
@@ -401,10 +446,10 @@
         };
 
         // Event listener for filter buttons
-        filterAll.addEventListener("click", () => filterTable("all"));
-        filterBasic.addEventListener("click", () => filterTable("basic"));
-        filterHalfBoard.addEventListener("click", () => filterTable("half_board"));
-        filterFullCourse.addEventListener("click", () => filterTable("full_course"));
+        // filterAll.addEventListener("click", () => filterTable("all"));
+        // filterBasic.addEventListener("click", () => filterTable("basic"));
+        // filterHalfBoard.addEventListener("click", () => filterTable("half_board"));
+        // filterFullCourse.addEventListener("click", () => filterTable("full_course"));
         
         document.getElementById("resetFilters").addEventListener("click", resetFilters);
 
@@ -452,13 +497,13 @@
     const loader = document.getElementById('loader');
 
     // Store the company ID to delete
-    let packageIdToDelete = null;
+    let offerIdToDelete = null;
 
     // Add event listener to the delete buttons
     document.querySelectorAll('.delete').forEach(tag => {
         tag.addEventListener('click', function () {
             // Get the company ID
-            packageIdToDelete = this.closest('tr').dataset.packageId;
+            offerIdToDelete = this.closest('tr').dataset.offerId;
 
             // Show the modal
             deleteModal.style.display = 'flex';
@@ -467,24 +512,24 @@
 
     // Handle the confirm button click
     confirmDeleteButton.addEventListener('click', function () {
-        if (packageIdToDelete) {
+        if (offerIdToDelete) {
             // Show loader and hide the confirm button
             confirmDeleteButton.style.display = 'none';
             loader.style.display = 'inline-block';
 
             // Send POST request to delete the company
-            fetch('/api/package/delete', {
+            fetch('/api/offer/delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ package_id: packageIdToDelete })
+                body: JSON.stringify({ offer_id: offerIdToDelete })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     // On success, remove the row from the table
-                    const row = document.getElementById(`row-${packageIdToDelete}`);
+                    const row = document.getElementById(`row-${offerIdToDelete}`);
                     row.remove();
                 } else {
                     // Handle failure case
@@ -500,7 +545,7 @@
                 deleteModal.style.display = 'none';
                 loader.style.display = 'none';
                 confirmDeleteButton.style.display = 'inline-block';
-                packageIdToDelete = null;
+                offerIdToDelete = null;
             });
         }
     });
@@ -509,7 +554,7 @@
     cancelDeleteButton.addEventListener('click', function () {
         // Hide the modal and reset the ID
         deleteModal.style.display = 'none';
-        packageIdToDelete = null;
+        offerIdToDelete = null;
     });
 </script>
 @stop

@@ -69,7 +69,7 @@
                                     </div>
                                 </div>
                                 <div class="text-start position-absolute fixed-bottom ms-7">
-                                    <h6 class="text-white text-sm mb-5">Copyright © 2022 Corporate UI Design System by Creative Tim.</h6>
+                                    <h6 class="text-white text-sm mb-5">Copyright © 2024 Corporate Next Trip System.</h6>
                                 </div>
                             </div>
                         </div>
