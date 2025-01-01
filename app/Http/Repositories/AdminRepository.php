@@ -13,6 +13,11 @@ class AdminRepository
     {
         $this->model = $admin;
     }
+
+    public function getAll() 
+    {
+        return $this->model->all();    
+    }
     
     public function store($request) 
     {
@@ -20,6 +25,12 @@ class AdminRepository
             'name'     => $request['name'],
             'email'    => $request['email'],
             'password' => Hash::make($request['password']),
+            'role'     => isset($request['role']) ? $request['role'] : 'admin'
         ]);    
+    }
+
+    public function delete($id) 
+    {
+        return $this->model->where('id', $id)->delete();    
     }
 }
