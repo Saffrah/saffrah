@@ -215,7 +215,7 @@ class PackageRepository
     {
         return $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
                            ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                           ->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])
+                           ->with(['Company', 'Transits', 'Transits.To', 'From', 'To', 'Files'])
                            ->where('package_confirms.user_id', $user_id)
                            ->get();    
     }
