@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminRegisterRequest;
 use App\Http\Requests\AdminLoginRequest;
-use App\Http\Services\AdminService;
-use Illuminate\Http\Request;
+use App\Http\Requests\AdminStoreRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Services\AdminService;
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -65,6 +67,48 @@ class AdminController extends Controller
         $admin = $this->admin_service->loggedinAdmin();
         
         return view('dashboard.dashboard', compact('admin'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $admins = $this->admin_service->get_all();
+        
+        return view('pages/admins/index', compact('admins'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('pages/admins/create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(AdminStoreRequest $request)
+    {
+        $created = $this->admin_service->store($request->validated());
+
+        if($created['code'] == 200)
+            return redirect()->route('admins.get');
+
+        return redirect()->back();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request)
+    {
+        if($this->admin_service->delete($request->input())) {
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 400);
     }
 
 }

@@ -26,3 +26,9 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('/packages', [PackageController::class, 'index'])->name('packages.get');
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.get');
 });
+
+Route::middleware([AdminMiddleware::class, 'role:super_admin'])->group(function () {
+    Route::get('/admins', [AdminController::class, 'index'])->name('admins.get');
+    Route::get('/admins/create', [AdminController::class, 'create'])->name('admins.create');
+    Route::post('/admins/store', [AdminController::class, 'store'])->name('admins.store');
+});
