@@ -34,7 +34,7 @@ class FileManagerService
                 'model_type'    => $request['model_type'],
                 'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
                 'file_name'     => $file_name,
-                'download_link' => '/public/uploads/'.$file_name
+                'download_link' => '/uploads/'.$file_name
             ];
 
             $created  = $this->file_manager_repository->create($array);

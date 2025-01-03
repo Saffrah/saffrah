@@ -4,6 +4,7 @@ use Pusher\PushNotifications\PushNotifications;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,11 +16,13 @@ Route::get('/', function () {
     ]);
 });
 
+Route::post('/companies/update_percentage', [CompanyController::class, 'edit'])->name('companies.edit.percentage');
 Route::post('/companies/update_status', [CompanyController::class, 'update'])->name('companies.update.status');
 Route::post('/companies/delete', [CompanyController::class, 'destroy'])->name('companies.delete');
 Route::post('/packages/delete', [PackageController::class, 'destroy'])->name('packages.delete');
 Route::post('/offers/delete', [OfferController::class, 'destroy'])->name('offers.delete');
 Route::post('/admins/delete', [AdminController::class, 'destroy'])->name('admins.delete');
+Route::post('/messages/delete', [MessageController::class, 'destroy'])->name('messages.delete');
 
 Route::get('/pusher', function () {
 
