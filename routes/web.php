@@ -15,8 +15,8 @@ Route::get('/', function () {
 
 Route::get('/login', [AdminController::class, 'getlogin'])->name('admin.get.login');
 Route::post('/login', [AdminController::class, 'postlogin'])->name('admin.post.login');
-Route::get('/register', [AdminController::class, 'getRegister'])->name('admin.get.register');
-Route::post('/register', [AdminController::class, 'postRegister'])->name('admin.post.register');
+// Route::get('/register', [AdminController::class, 'getRegister'])->name('admin.get.register');
+// Route::post('/register', [AdminController::class, 'postRegister'])->name('admin.post.register');
 
 Route::middleware([AdminMiddleware::class])->group(function () {
     Route::post('logout', [AdminController::class, 'logout'])->name('admin.logout');
