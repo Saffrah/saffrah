@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OfferController;
 use App\Http\Middleware\AdminMiddleware;
@@ -31,4 +32,8 @@ Route::middleware([AdminMiddleware::class, 'role:super_admin'])->group(function 
     Route::get('/admins', [AdminController::class, 'index'])->name('admins.get');
     Route::get('/admins/create', [AdminController::class, 'create'])->name('admins.create');
     Route::post('/admins/store', [AdminController::class, 'store'])->name('admins.store');
+
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.get');
+    Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
+    Route::post('/messages/store', [MessageController::class, 'store'])->name('messages.store');
 });

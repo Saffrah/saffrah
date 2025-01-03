@@ -54,9 +54,12 @@ class CompanyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        //
+        if($this->company_service->updatePercentage($request->input())) {
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 400); 
     }
 
     /**

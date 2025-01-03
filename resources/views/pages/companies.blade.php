@@ -66,6 +66,19 @@
         transform: rotate(360deg);
         }
     }
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        background-color: black !important; /* Ensures the arrows are black */
+        border-radius: 50%; /* Makes the arrows circular */
+    }
+    .carousel-control-prev-icon::after, .carousel-control-next-icon::after {
+        color: white; /* White arrow inside the black circle */
+    }
+    .updateModal .modal-header {
+        border-bottom: 1px solid #dee2e6;
+    }
+    .updateModal .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
 </style>
 @stop
 
@@ -119,7 +132,9 @@
                             <tr>
                                 <th class="text-secondary text-xs font-weight-semibold opacity-7">Company</th>
                                 <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Registration No.</th>
+                                <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Registration Files</th>
                                 <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Status</th>
+                                <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Commission</th>
                                 <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Reegistered At</th>
                                 <th class="text-secondary opacity-7"></th>
                             </tr>
@@ -135,12 +150,28 @@
                                         <div class="d-flex flex-column justify-content-center ms-1">
                                             <h6 class="mb-0 text-sm font-weight-semibold">{{ $company->name }}</h6>
                                             <p class="text-sm text-secondary mb-0">{{ $company->email }}</p>
+                                            <p class="text-sm text-secondary mb-0">{{ $company->phone_number }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <p class="text-sm text-dark font-weight-semibold mb-0">Commercial: {{ $company->commercial_number }}</p>
                                     <p class="text-sm text-secondary mb-0">Taxes: {{ $company->tax_number }}</p>
+                                </td>
+                                <td class="text-left">
+                                    @if($company->Files->isEmpty())
+                                    No Files
+                                    @else
+                                    <a class="view-images-btn cursor-pointer" data-company-id="{{ $company->id }}">
+                                        <svg width="20px" height="20px" viewBox="0 0 0.6 0.6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>pic_line</title><g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="File" transform="translate(-912)" fill-rule="nonzero"><g id="pic_line" transform="translate(912)"><path d="M0.6 0v0.6H0V0zM0.315 0.581l0 0 -0.002 0.001 -0.001 0 0 0 -0.002 -0.001q0 0 -0.001 0l0 0 0 0.011 0 0.001 0 0 0.003 0.002 0 0 0 0 0.003 -0.002 0 0 0 0 0 -0.011q0 0 0 0m0.007 -0.003 0 0 -0.005 0.002 0 0 0 0 0 0.011 0 0 0 0 0.005 0.002q0 0 0.001 0l0 0 -0.001 -0.015q0 0 -0.001 -0.001m-0.018 0a0.001 0.001 0 0 0 -0.001 0l0 0 -0.001 0.015q0 0 0 0.001l0 0 0.005 -0.002 0 0 0 0 0 -0.011 0 0 0 0z" id="MingCute" fill-rule="nonzero"/><path d="M0.5 0.075a0.05 0.05 0 0 1 0.05 0.046L0.55 0.125v0.35a0.05 0.05 0 0 1 -0.046 0.05L0.5 0.525H0.1a0.05 0.05 0 0 1 -0.05 -0.046L0.05 0.475V0.125a0.05 0.05 0 0 1 0.046 -0.05L0.1 0.075zM0.247 0.301l-0.141 0.141a0.025 0.025 0 0 1 -0.006 0.004V0.475h0.4v-0.028a0.025 0.025 0 0 1 -0.006 -0.004L0.424 0.372l-0.018 0.018 0.005 0.005a0.025 0.025 0 0 1 -0.035 0.035zM0.5 0.125H0.1v0.253l0.125 -0.125a0.031 0.031 0 0 1 0.042 -0.002l0.003 0.002 0.102 0.102 0.031 -0.031a0.031 0.031 0 0 1 0.042 -0.002l0.003 0.002L0.5 0.378zm-0.113 0.05a0.038 0.038 0 1 1 0 0.075 0.038 0.038 0 0 1 0 -0.075" id="形状" fill="#09244B"/></g></g></g></svg>
+                                    </a>
+                                    <!-- Include files for each company in a hidden div -->
+                                    <div class="company-images d-none" id="company-images-{{ $company->id }}">
+                                        @foreach($company->Files as $file)
+                                        <img src="{{ $file->download_link }}" alt="Company Image" class="company-image">
+                                        @endforeach
+                                    </div>
+                                    @endif
                                 </td>
                                 <td class="align-middle text-center text-sm">
                                     @if($company->email_verified_at)
@@ -159,10 +190,18 @@
                                     </span>
                                     @endif
                                 </td>
+                                <td class="text-center">
+                                    <p class="text-sm text-dark font-weight-semibold mb-0">{{ $company->percentage == null ? 0 : $company->percentage }}%</p>
+                                </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-sm font-weight-normal">{{ $company->created_at->toDateString() }}</span>
                                 </td>
                                 <td class="align-middle">
+                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs m-2 edit cursor-pointer" data-bs-toggle="tooltip" data-bs-title="Edit Company">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 3L3 11.207V13h1.793L13 4.793 11.207 3zM14 4.5 11.5 2 12.5 1 15 3.5 14 4.5z"/>
+                                        </svg>
+                                    </a>
                                     <a href="javascript:;" class="text-secondary font-weight-bold text-xs m-2 delete cursor-pointer" data-bs-toggle="tooltip" data-bs-title="Delete user">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6"></polyline>
@@ -176,6 +215,60 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- FilesModal -->
+                <div class="modal" id="imageModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Company Files</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: #b0b0b0;"></button>
+                            </div>
+                            <div class="modal-body position-relative">
+                                <!-- Carousel -->
+                                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <!-- Images will be dynamically inserted here -->
+                                    </div>
+                                    <!-- Carousel Controls -->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon bg-black rounded-circle p-2" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon bg-black rounded-circle p-2" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- files modal -->
+                <!-- Update Modal -->
+                <div class="modal fade updateModal" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">Update Percentage</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updatePercentageForm">
+                                    <div class="mb-3">
+                                        <label for="percentageInput" class="form-label">Percentage</label>
+                                        <input type="number" class="form-control" id="percentageInput" placeholder="Enter percentage">
+                                        @csrf
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="updatePercentageButton">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Update Modal -->
                 <div class="border-top py-3 px-3 d-flex align-items-center">
                     <p class="font-weight-semibold mb-0 text-dark text-sm paging"></p>
                     <div class="ms-auto">
@@ -288,6 +381,86 @@
 
         // Initialize the table display
         updateTable();
+
+        const modal         = document.getElementById('imageModal');
+        const carouselInner = document.querySelector('#imageCarousel .carousel-inner');
+
+        document.querySelectorAll('.view-images-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const companyId = this.dataset.companyId;
+                const imageContainer = document.getElementById(`company-images-${companyId}`);
+                const images = imageContainer.querySelectorAll('.company-image');
+
+                // Populate carousel
+                carouselInner.innerHTML = Array.from(images).map((img, index) => `
+                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                        <img src="${img.src}" class="d-block w-100" alt="Company Image">
+                    </div>
+                `).join('');
+
+                // Show modal
+                modal.style.display = 'block';
+            });
+        });
+
+        modal.querySelector('.btn-close').addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+
+        let currentCompanyId  = null;
+        const updateModal     = new bootstrap.Modal(document.getElementById("updateModal"));
+        const percentageInput = document.getElementById("percentageInput");
+
+        // Edit button click handler
+        document.querySelectorAll(".edit").forEach(button => {
+            button.addEventListener("click", function () {
+                const companyRow = this.closest("tr");
+                currentCompanyId = companyRow.getAttribute("data-company-id");
+                const currentPercentage = companyRow.getAttribute("data-percentage");
+
+                // Set input value
+                percentageInput.value = currentPercentage || "";
+
+                // Show modal
+                updateModal.show();
+            });
+        });
+
+        // Update button click handler
+        document.getElementById("updatePercentageButton").addEventListener("click", function () {
+            const newPercentage = percentageInput.value;
+
+            // Validate input
+            if (newPercentage === "" || isNaN(newPercentage)) {
+                alert("Please enter a valid percentage.");
+                return;
+            }
+
+            // Make API call to update percentage
+            fetch(`/api/companies/update_percentage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector("input[name='_token']").value
+                },
+                body: JSON.stringify({company_id: currentCompanyId, percentage: newPercentage })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to update percentage");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Close modal and refresh page
+                    updateModal.hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("Error updating percentage. Please try again.");
+                });
+        });
     });
 
 

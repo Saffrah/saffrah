@@ -27,7 +27,7 @@ class StoreFileRequest extends RequestValidatorResponse
             'files'      => 'required|array',
             'files.*'    => 'file|max:2048|mimes:jpg,png,csv,xlsx,xls,doc,docx,pdf',
             'model_type' => 'required|string|in:company,package,user',
-            'package_id' => 'required_if:model_type,package,user|numeric'
+            'package_id' => 'required_if:model_type,package|numeric'
         ];
     }
 

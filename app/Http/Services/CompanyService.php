@@ -30,6 +30,11 @@ class CompanyService
             return $this->company_repository->update($input['company_id'], ['email_verified_at' => null]);
     }
 
+    public function updatePercentage($input) 
+    {
+        return $this->company_repository->update($input['company_id'], ['percentage' => $input['percentage']]);
+    }
+
     public function delete($request) 
     {
         $packages = $this->package_repository->deleteAllByCompany($request['company_id']);
