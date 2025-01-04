@@ -263,6 +263,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <span id="updateLoader" class="loader" style="display: none;"></span>
                                 <button type="button" class="btn btn-primary" id="updatePercentageButton">Update</button>
                             </div>
                         </div>
@@ -426,8 +427,15 @@
             });
         });
 
+        const confirmPercentageButton = document.getElementById('updatePercentageButton');
+        const updateLoader            = document.getElementById('updateLoader');
+
         // Update button click handler
-        document.getElementById("updatePercentageButton").addEventListener("click", function () {
+        confirmPercentageButton.addEventListener("click", function () {
+            // Show loader and hide the confirm button
+            confirmPercentageButton.style.display = 'none';
+            updateLoader.style.display = 'inline-block';
+
             const newPercentage = percentageInput.value;
 
             // Validate input
@@ -453,6 +461,8 @@
                 })
                 .then(data => {
                     // Close modal and refresh page
+                    updateLoader.style.display            = 'none';
+                    confirmPercentageButton.style.display = 'inline-block';
                     updateModal.hide();
                     location.reload();
                 })

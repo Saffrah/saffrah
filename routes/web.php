@@ -25,6 +25,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.get');
     Route::get('/packages', [PackageController::class, 'index'])->name('packages.get');
+    Route::get('/deals', [PackageController::class, 'show'])->name('deals.get');
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.get');
 });
 

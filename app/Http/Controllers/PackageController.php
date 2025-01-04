@@ -46,9 +46,11 @@ class PackageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $deals = $this->package_service->get_deals();
+
+        return view('pages/deals', compact('deals'));
     }
 
     /**

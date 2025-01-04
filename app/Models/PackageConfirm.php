@@ -23,5 +23,9 @@ class PackageConfirm extends Model
         return $this->belongsTo(User::class);    
     }
 
+    public function Package() 
+    {
+        return $this->belongsTo(Package::class);    
+    }
     
 }
