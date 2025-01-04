@@ -21,6 +21,11 @@ class PackageService
         return $this->package_repository->all();    
     }
 
+    public function get_deals() 
+    {
+        return $this->package_repository->deals();    
+    }
+
     public function updateStatus($input) 
     {
         if($input['new_status'] == "verify")
