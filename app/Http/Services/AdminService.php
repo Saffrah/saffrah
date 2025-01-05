@@ -23,6 +23,16 @@ class AdminService
         return Auth::guard('admin')->user();    
     }
 
+    public function getMonthlyIncome() 
+    {
+        return $this->admin_repository->monthlyIncome();
+    }
+
+    public function getYearlyIncome() 
+    {
+        return $this->admin_repository->yearlyIncome();
+    }
+
     public function get_all() 
     {
         return $this->admin_repository->getAll();    
