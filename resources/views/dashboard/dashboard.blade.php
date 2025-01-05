@@ -275,7 +275,7 @@
                                 <h4 class="mb-2 font-weight-bold">${{$monthly_income->income}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
-                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{round(($monthly_income->income/$yearly_income->sum('income'))*100,2)}}%
+                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('income') != 0 ? round(($monthly_income->income/$yearly_income->sum('income'))*100,2) : 0}}%
                                     </span>
                                     <span class="text-sm ms-1">from ${{$yearly_income->sum('income')}}</span>
                                 </div>
@@ -301,7 +301,7 @@
                                 <h4 class="mb-2 font-weight-bold">{{$monthly_income->active_companies}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
-                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{ round(($monthly_income->active_companies/$yearly_income->sum('active_companies'))*100,2) }}%
+                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_companies') != 0 ? round(($monthly_income->active_companies/$yearly_income->sum('active_companies'))*100,2) : 0}}%
                                     </span>
                                     <span class="text-sm ms-1">from {{$yearly_income->sum('active_companies')}}</span>
                                 </div>
@@ -326,7 +326,7 @@
                                 <h4 class="mb-2 font-weight-bold">{{ $monthly_income->active_packages }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
-                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2)}}%
+                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_packages') != ? round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2) : 0}}%
                                     </span>
                                     <span class="text-sm ms-1">from {{$yearly_income->sum('active_packages')}}</span>
                                 </div>
@@ -351,7 +351,7 @@
                                 <h4 class="mb-2 font-weight-bold">{{ $monthly_income->confirmed_packages }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
-                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{ round(($monthly_income->confirmed_packages/$yearly_income->sum('confirmed_packages'))*100, 2) }}%
+                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('confirmed_packages') != 0 ? round(($monthly_income->confirmed_packages/$yearly_income->sum('confirmed_packages'))*100, 2) : 0}}%
                                     </span>
                                     <span class="text-sm ms-1">from {{$yearly_income->sum('confirmed_packages')}}</span>
                                 </div>
