@@ -326,7 +326,7 @@
                                 <h4 class="mb-2 font-weight-bold">{{ $monthly_income->active_packages }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
-                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_packages') != ? round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2) : 0}}%
+                                    <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_packages') != 0 ? round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2) : 0}}%
                                     </span>
                                     <span class="text-sm ms-1">from {{$yearly_income->sum('active_packages')}}</span>
                                 </div>
