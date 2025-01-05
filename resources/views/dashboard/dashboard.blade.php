@@ -617,7 +617,7 @@
                     ticks: {
                         stepSize: 1000, // Increment by 1000
                         callback: function(value) {
-                            return value.toLocaleString() + ' EUR'; // Format with thousand separators
+                            return value.toLocaleString() + ' USD'; // Format with thousand separators
                         },
                         display: true,
                         padding: 10,

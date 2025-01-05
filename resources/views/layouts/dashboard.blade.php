@@ -67,6 +67,34 @@
                         this.classList.add("active"); // Add "active" to the clicked link
                     });
                 });
+
+                // Get the current URL path
+                const path = window.location.pathname;
+
+                // Split the path into segments based on '/'
+                const pathSegments = path.split('/').filter(segment => segment !== '');
+
+                // Initialize breadcrumb
+                let breadcrumbHTML = `<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Dashboard</a></li>`;
+                let title          = 'Dashboard';  // Default title
+
+                // Generate the breadcrumb based on the path
+                pathSegments.forEach((segment, index) => {
+                    // Capitalize the segment (for example 'companies' becomes 'Companies')
+                    const capitalizedSegment = segment.charAt(0).toUpperCase() + segment.slice(1);
+
+                    // If it's the last segment, set it as active
+                    if (index === pathSegments.length - 1) {
+                        breadcrumbHTML += `<li class="breadcrumb-item text-sm text-dark active" aria-current="page">${capitalizedSegment}</li>`;
+                        title = `${capitalizedSegment} ${title !== 'Dashboard' ? ' ' + title : ''}`;  // Update title for the last segment
+                    } else {
+                        breadcrumbHTML += `<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">${capitalizedSegment}</a></li>`;
+                    }
+                });
+
+                // Update the breadcrumb HTML and title
+                document.getElementById('breadcrumb').innerHTML = breadcrumbHTML;
+                document.getElementById('breadcrumb-title').innerText = title;
             });
 
             var win = navigator.platform.indexOf('Win') > -1;
