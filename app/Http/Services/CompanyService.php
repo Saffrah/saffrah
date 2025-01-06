@@ -17,6 +17,21 @@ class CompanyService
         $this->package_repository = $package_repository;
     }
 
+    public function findOne($id) 
+    {
+        $company  = $this->company_repository->find($id);
+        
+        $packages = $company->packages->map(function ($package) {
+            $package->total_purchased = $package->confirms->sum(fn($confirm) => $confirm->total_guests * $package->price_per_person);
+            return $package;
+        });
+
+        return [
+            'company'  => $company,
+            'packages' => $packages
+        ];
+    }
+
     public function get_all() 
     {
         return $this->company_repository->all();    

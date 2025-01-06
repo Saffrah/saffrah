@@ -48,7 +48,12 @@ class CompanyController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $result   = $this->company_service->findOne($id);
+
+        $company  = $result['company'];
+        $packages = $result['packages'];
+        
+        return view('pages/company', compact('company', 'packages'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Repositories;
 
 use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 
 class CompanyRepository
 {
@@ -11,6 +12,13 @@ class CompanyRepository
     public function __construct(Company $company = null) 
     {
         $this->model = $company;
+    }
+
+    public function find($id) 
+    {
+        return $this->model->with(['packages.confirms' => function ($query) {
+            $query->select('package_id', DB::raw('SUM(no_of_guests) as total_guests'))->groupBy('package_id');
+        }])->find($id);    
     }
     
     public function all() 

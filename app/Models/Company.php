@@ -50,6 +50,11 @@ class Company extends Authenticatable
         ];
     }
 
+    public function Packages() 
+    {
+        return $this->hasMany(Package::class);    
+    }
+
     public function Files()
     {
         return $this->hasMany(FileManager::class, 'model_id')

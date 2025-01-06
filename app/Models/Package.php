@@ -34,6 +34,11 @@ class Package extends Model
         return $this->belongsTo(Company::class);    
     }
 
+    public function Confirms()
+    {
+        return $this->hasMany(PackageConfirm::class);
+    }
+
     public function User() 
     {
         return $this->belongsTo(User::class);    

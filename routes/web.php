@@ -24,6 +24,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.get');
+    Route::get('/companies/{company_id}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('/packages', [PackageController::class, 'index'])->name('packages.get');
     Route::get('/deals', [PackageController::class, 'show'])->name('deals.get');
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.get');
