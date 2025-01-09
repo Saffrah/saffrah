@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Services\AdminService;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AdminController extends Controller
 {
@@ -60,6 +62,57 @@ class AdminController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.get.login');
+    }
+
+    public function forgotPassword() 
+    {
+        return view('auth/forgot_password');    
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        // Validate email exists in users table
+        $request->validate([
+            'email' => ['required', 'email', 'exists:admins,email'],
+        ], [
+            'email.exists' => 'The email address does not exist in our records.',
+        ]);
+
+        // Send password reset link
+        $status = Password::broker('admins')->sendResetLink(
+            $request->only('email')
+        );
+    
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showResetForm(Request $request, $token)
+    {
+        return view('auth/reset_password', ['token' => $token, 'email' => $request->query('email')]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email', 'exists:admins,email'],
+            'password' => ['required', 'min:8', 'confirmed'],
+            'token' => ['required'],
+        ]);
+
+        $status = Password::broker('admins')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($admin, $password) {
+                $admin->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect('/login')->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
     }
 
     public function dashboard() 

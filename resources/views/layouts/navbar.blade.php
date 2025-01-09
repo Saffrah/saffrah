@@ -7,6 +7,9 @@
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page" id="breadcrumb-current">Dashboard</li>
         </ol>
         <h6 class="font-weight-bold mb-0" id="breadcrumb-title">Dashboard</h6>
+        <div id="breadcrumb-wrapper">
+            @yield('breadcrumbData')
+        </div>
     </nav>
 
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">

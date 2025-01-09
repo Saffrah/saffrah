@@ -7,6 +7,10 @@
 </style>
 @stop
 
+@section('breadcrumbData')
+    <div id="company-breadcrumb" data-company-name="{{ $company->name }}"></div>
+@endsection
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -37,7 +41,7 @@
                                         <div class="col-12">
                                             <div class="w-100">
                                                 <p class="text-sm text-secondary mb-1">Total Packages</p>
-                                                <h4 class="mb-2 font-weight-bold">{{ $packages->count() }}</h4>
+                                                <h4 class="mb-2 font-weight-bold" id="totalPackagesCard">{{ $packages->count() }}</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +61,7 @@
                                         <div class="col-12">
                                             <div class="w-100">
                                                 <p class="text-sm text-secondary mb-1">Total Revenue</p>
-                                                <h4 class="mb-2 font-weight-bold">${{ $packages->sum('total_purchased') }}</h4>
+                                                <h4 class="mb-2 font-weight-bold" id="totalIncomeCard">${{ $packages->sum('total_purchased') }}</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +80,7 @@
                                         <div class="col-12">
                                             <div class="w-100">
                                                 <p class="text-sm text-secondary mb-1">Company Commission</p>
-                                                <h4 class="mb-2 font-weight-bold">{{ $company->percentage }}%</h4>
+                                                <h4 class="mb-2 font-weight-bold" id="companyCommission" data-commission="{{$company->percentage/100}}">{{ $company->percentage }}%</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +99,7 @@
                                         <div class="col-12">
                                             <div class="w-100">
                                                 <p class="text-sm text-secondary mb-1">Net Income</p>
-                                                <h4 class="mb-2 font-weight-bold">${{ (($company->percentage/100)*$packages->sum('total_purchased')) }}</h4>
+                                                <h4 class="mb-2 font-weight-bold" id="systemRevenueCard">${{ (($company->percentage/100)*$packages->sum('total_purchased')) }}</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -197,7 +201,7 @@
                                             </thead>
                                             <tbody>
                                                 @foreach($packages as $key => $package)
-                                                <tr data-status="@if($package->reservation_type == 1){{'basic'}}@elseif($package->reservation_type == 2){{'half_board'}}@elseif($package->reservation_type == 3){{'full_course'}}@endif" data-company-id="{{ $package->id }}" id="row-{{$package->id}}">
+                                                <tr data-status="@if($package->reservation_type == 1){{'basic'}}@elseif($package->reservation_type == 2){{'half_board'}}@elseif($package->reservation_type == 3){{'full_course'}}@endif" data-company-id="{{ $package->id }}" id="row-{{$package->id}}" data-total-purchased="{{ $package->total_purchased }}">
                                                     <td>
                                                         <div class="d-flex px-2 py-1">
                                                             <div class="d-flex align-items-center">
@@ -321,26 +325,30 @@
 @section('JavaScript')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const filterAll        = document.getElementById("filter-all");
-        const filterBasic      = document.getElementById("filter-basic");
-        const filterHalfBoard  = document.getElementById("filter-half_board");
-        const filterFullCourse = document.getElementById("filter-full_course");
+        const filterAll             = document.getElementById("filter-all");
+        const filterBasic           = document.getElementById("filter-basic");
+        const filterHalfBoard       = document.getElementById("filter-half_board");
+        const filterFullCourse      = document.getElementById("filter-full_course");
 
-        const searchInput      = document.getElementById("searchInput");
-        const table            = document.getElementById("PackagesTable");
-        const tableRows        = Array.from(table.querySelectorAll("tbody tr"));
-    
-        const yearFilter       = document.getElementById("yearFilter");
-        const monthFilter      = document.getElementById("monthFilter");
-        const filterButton     = document.getElementById("filterByDate");
-    
-        const pageInfo         = document.querySelector(".paging");
-        const prevButton       = document.querySelector(".previous");
-        const nextButton       = document.querySelector(".next");
+        const searchInput           = document.getElementById("searchInput");
+        const table                 = document.getElementById("PackagesTable");
+        const tableRows             = Array.from(table.querySelectorAll("tbody tr"));
 
-        let filteredRows  = [...tableRows]; // Rows currently visible (filtered or searched)
+        const yearFilter            = document.getElementById("yearFilter");
+        const monthFilter           = document.getElementById("monthFilter");
+        const filterButton          = document.getElementById("filterByDate");
+
+        const pageInfo              = document.querySelector(".paging");
+        const prevButton            = document.querySelector(".previous");
+        const nextButton            = document.querySelector(".next");
+
+        const totalIncomeCard       = document.getElementById("totalIncomeCard");
+        const totalPackagesCard     = document.getElementById("totalPackagesCard");
+        const systemRevenueCard     = document.getElementById("systemRevenueCard");
+
+        let filteredRows = [...tableRows]; // Rows currently visible (filtered or searched)
         let currentFilter = "all"; // Current filter type
-        let currentPage   = 1;
+        let currentPage = 1;
         const rowsPerPage = 10;
 
         // Populate year dropdown based on available data
@@ -367,7 +375,7 @@
         const updateTable = () => {
             const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
             const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = currentPage * rowsPerPage;
+            const endIndex   = currentPage * rowsPerPage;
 
             tableRows.forEach(row => (row.style.display = "none")); // Hide all rows
             filteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = "")); // Show only rows for the current page
@@ -375,12 +383,15 @@
             pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
             prevButton.disabled = currentPage === 1;
             nextButton.disabled = currentPage === totalPages || totalPages === 0;
+
+            // Update statistics on the cards
+            updateStats(filteredRows);
         };
 
         // Filter table by type (e.g., all, basic)
         const filterTable = filterType => {
             currentFilter = filterType;
-            filteredRows = tableRows.filter(row => {
+            filteredRows  = tableRows.filter(row => {
                 const status = row.getAttribute("data-status");
                 return filterType === "all" || status === filterType;
             });
@@ -424,11 +435,36 @@
             updateTable();
         };
 
+        // Update the statistics on the four cards
+        const updateStats = (filteredRows) => {
+            let totalIncome       = 0;
+            let totalPackages     = 0;
+            let systemRevenue     = 0;
+
+            filteredRows.forEach(row => {
+                const totalPurchased = parseFloat(row.getAttribute("data-total-purchased")) || 0; // Get total_purchased from row attribute
+                
+                totalIncome += totalPurchased; // Assuming total_income is total_purchased for the given row
+                totalPackages++; // Increment total packages count (each row represents a package)
+            });
+            // Select the <h4> element using its id
+            const element = document.getElementById('companyCommission');
+            // Get the value of the data-commission attribute
+            const commission = element.getAttribute('data-commission');
+
+            systemRevenue = totalIncome * commission; // Assuming 20% revenue to the system
+            
+            // Update the card values
+            totalIncomeCard.textContent    = `$${totalIncome.toFixed(2)}`;
+            totalPackagesCard.textContent  = `${totalPackages}`;
+            systemRevenueCard.textContent  = `$${systemRevenue.toFixed(2)}`;
+        };
+
         // Reset filters to show the original table
         const resetFilters = () => {
             yearFilter.value = "";
             monthFilter.value = "";
-            
+
             // Reapply the current filter and search
             filterTable(currentFilter);
             searchTable();
@@ -441,7 +477,7 @@
         filterBasic.addEventListener("click", () => filterTable("basic"));
         filterHalfBoard.addEventListener("click", () => filterTable("half_board"));
         filterFullCourse.addEventListener("click", () => filterTable("full_course"));
-        
+
         document.getElementById("resetFilters").addEventListener("click", resetFilters);
 
         // Event listener for search input
@@ -479,73 +515,6 @@
         // Initialize table and populate year filter
         populateYears();
         updateTable();
-    });
-
-    // Variables for the modal and buttons
-    const deleteModal = document.getElementById('delete-modal');
-    const confirmDeleteButton = document.getElementById('confirm-delete');
-    const cancelDeleteButton = document.getElementById('cancel-delete');
-    const loader = document.getElementById('loader');
-
-    // Store the company ID to delete
-    let packageIdToDelete = null;
-
-    // Add event listener to the delete buttons
-    document.querySelectorAll('.delete').forEach(tag => {
-        tag.addEventListener('click', function () {
-            // Get the company ID
-            packageIdToDelete = this.closest('tr').dataset.packageId;
-
-            // Show the modal
-            deleteModal.style.display = 'flex';
-        });
-    });
-
-    // Handle the confirm button click
-    confirmDeleteButton.addEventListener('click', function () {
-        if (packageIdToDelete) {
-            // Show loader and hide the confirm button
-            confirmDeleteButton.style.display = 'none';
-            loader.style.display = 'inline-block';
-
-            // Send POST request to delete the company
-            fetch('/api/package/delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ package_id: packageIdToDelete })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // On success, remove the row from the table
-                    const row = document.getElementById(`row-${packageIdToDelete}`);
-                    row.remove();
-                } else {
-                    // Handle failure case
-                    alert('Failed to delete company');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            })
-            .finally(() => {
-                // Hide the modal and reset loader and confirm button
-                deleteModal.style.display = 'none';
-                loader.style.display = 'none';
-                confirmDeleteButton.style.display = 'inline-block';
-                packageIdToDelete = null;
-            });
-        }
-    });
-
-    // Handle the cancel button click
-    cancelDeleteButton.addEventListener('click', function () {
-        // Hide the modal and reset the ID
-        deleteModal.style.display = 'none';
-        packageIdToDelete = null;
     });
 </script>
 @stop
