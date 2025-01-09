@@ -18,6 +18,11 @@ Route::post('/login', [AdminController::class, 'postlogin'])->name('admin.post.l
 // Route::get('/register', [AdminController::class, 'getRegister'])->name('admin.get.register');
 // Route::post('/register', [AdminController::class, 'postRegister'])->name('admin.post.register');
 
+Route::get('/password_forget', [AdminController::class, 'forgotPassword'])->name('admin.password.forget');
+Route::post('/forgot_password', [AdminController::class, 'sendResetLink'])->name('admin.forgot.password');
+Route::get('/reset_password/{token}', [AdminController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset_password', [AdminController::class, 'resetPassword'])->name('reset.password');
+
 Route::middleware([AdminMiddleware::class])->group(function () {
     Route::post('logout', [AdminController::class, 'logout'])->name('admin.logout');
     

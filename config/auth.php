@@ -120,6 +120,14 @@ return [
             'throttle' => 60,
         ],
 
+        // Add this for admins
+        'admins' => [
+            'provider' => 'admins', // Referencing the admins provider
+            'table' => 'password_resets', // Same table can be used
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
         'companies' => [
             'provider' => 'companies',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),

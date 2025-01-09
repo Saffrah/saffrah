@@ -51,31 +51,35 @@
                     <div class="col-xl-4 col-md-6 d-flex flex-column mx-auto">
                         <div class="card card-plain mt-8">
                             <div class="card-header pb-0 text-left bg-transparent">
-                                <h3 class="font-weight-black text-dark display-6">Welcome back</h3>
-                                <p class="mb-0">Welcome back! Please enter your details.</p>
+                                <h3 class="font-weight-black text-dark display-6">Opsy, You Forgot Your Password !</h3>
+                                <p class="mb-0">Enter your email nut head</p>
                             </div>
+                            <!-- Display errors -->
+                            @if ($errors->any())
+                                <div style="color: red;">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <!-- Success Message -->
+                            @if (session('status'))
+                                <div style="color: green;">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
                             <div class="card-body">
-                                <form role="form" action="{{ route('admin.post.login') }}" method="POST">
+                                <form role="form" action="{{ route('admin.forgot.password') }}" method="POST">
                                     @csrf
                                     <label>Email Address</label>
                                     <div class="mb-3">
                                         <input type="email" name="email" class="form-control" placeholder="Enter your email address" aria-label="Email" aria-describedby="email-addon" required>
                                     </div>
-                                    <label>Password</label>
-                                    <div class="mb-3">
-                                        <input type="password" name="password" class="form-control" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon" required>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="form-check form-check-info text-left mb-0">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                            <label class="font-weight-normal text-dark mb-0" for="flexCheckDefault">
-                                                Remember for 14 days
-                                            </label>
-                                        </div>
-                                        <a href="{{ route('admin.password.forget') }}" class="text-xs font-weight-bold ms-auto">Forgot password</a>
-                                    </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-dark w-100 mt-4 mb-3">Sign in</button>
+                                        <button type="submit" class="btn btn-dark w-100 mt-4 mb-3">Send Reset Link</button>
                                     </div>
                                 </form>
                             </div>
