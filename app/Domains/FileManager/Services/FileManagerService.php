@@ -4,6 +4,9 @@ namespace App\Domains\FileManager\Services;
 
 use App\Domains\FileManager\Repositories\FileManagerRepository;
 use App\Domains\Company\Services\CompanyService;
+use App\Models\Company;
+use App\Models\Package;
+use App\Models\User;
 
 class FileManagerService 
 {
@@ -22,13 +25,24 @@ class FileManagerService
 
     public function storeFile($request)
     {
-        $entity  = auth('sanctum')->user();
+        $auth     = auth('sanctum')->user();
         $uploaded = false;
 
         foreach ($request['files'] as $key => $file) {
-            $file_name = $entity->id.'_'.str_replace(' ', '_', $entity->name).'_'.($key+1).'_'.$request['model_type'].date('Ymd_His').'.'.$file->getClientOriginalExtension();
+            $file_name = $auth->id.'_'.str_replace(' ', '_', $auth->name).'_'.($key+1).'_'.$request['model_type'].date('Ymd_His').'.'.$file->getClientOriginalExtension();
             $uploaded  = $file->move(public_path('uploads'), $file_name);
             
+            if($request['model_type'] == 'company') {
+                $entity = Company::find($request['model_id']);
+                $request['model_type'] = Company::class;
+            } elseif($request['model_type'] == 'package') {
+                $entity = Package::find($request['model_id']);
+                $request['model_type'] = Package::class;
+            } elseif ($request['model_type'] == 'user') {
+                $entity = User::find($request['model_id']);
+                $request['model_type'] = User::class;
+            }
+
             $array     = [
                 'model_id'      => $entity->id,
                 'model_type'    => $request['model_type'],

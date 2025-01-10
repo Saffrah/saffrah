@@ -57,7 +57,6 @@ class Company extends Authenticatable
 
     public function Files()
     {
-        return $this->hasMany(FileManager::class, 'model_id')
-                    ->where('model_type', 'company');
+        return $this->hasMany(FileManager::class, 'model');
     }
 }

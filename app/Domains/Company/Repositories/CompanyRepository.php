@@ -4,6 +4,7 @@ namespace App\Domains\Company\Repositories;
 
 use App\Models\Company;
 use App\Models\Package;
+use Illuminate\Support\Facades\Log;
 
 class CompanyRepository
 {
@@ -23,12 +24,23 @@ class CompanyRepository
 
     public function deals($company_id) 
     {
-        return $this->package_model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
-                                   ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                                   ->with(['Transits', 'Transits.To', 'From', 'To', 'Files'])
-                                   ->where('packages.company_id', $company_id)
-                                   ->get()
-                                   ->toArray();    
+        $packages = $this->package_model->with(['Transits', 'Transits.To', 'From', 'To', 'Files', 'Confirms.User.Files'])
+                                        ->where('packages.company_id', $company_id)
+                                        ->get();
+
+        $packages->each(function ($package) {
+            $package->confirms->each(function ($confirm) use ($package) {
+                $filteredFiles = $confirm->user->files->filter(function ($file) use ($package) {
+                    return $file->package_id === $package->id;
+                })->values();
+        
+                // Overwrite the files relationship
+                $confirm->user->setRelation('files', $filteredFiles);
+            });
+        });
+
+        return $packages->toArray();
+  
     }
     
 }
