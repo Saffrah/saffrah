@@ -17,4 +17,10 @@ class FileManager extends Model
         'download_link',
     ];
 
+    // Define the inverse polymorphic relationship
+    public function model()
+    {
+        return $this->morphTo();
+    }
+
 }

@@ -61,7 +61,7 @@ class Package extends Model
 
     public function Files() 
     {
-        return $this->hasMany(FileManager::class)->where('model_type', 'package');    
+        return $this->morphMany(FileManager::class, 'model');    
     }
 
     public function Offers() 
