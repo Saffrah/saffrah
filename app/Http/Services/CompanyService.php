@@ -26,9 +26,12 @@ class CompanyService
             return $package;
         });
 
+        $confirmed_packages = $this->company_repository->confirms($id);
+
         return [
             'company'  => $company,
-            'packages' => $packages
+            'packages' => $packages,
+            'confirms' => $confirmed_packages
         ];
     }
 

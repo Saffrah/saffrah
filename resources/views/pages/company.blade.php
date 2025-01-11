@@ -315,6 +315,116 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Company Packages -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card border shadow-xs mb-4">
+                                <div class="card-header border-bottom pb-0">
+                                    <div class="d-sm-flex align-items-center mb-4">
+                                        <div>
+                                            <h6 class="font-weight-semibold text-lg mb-0">{{ $company->name }} Confirmed Packages</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body px-0 py-0">
+                                    <div class="py-3 px-3 d-sm-flex align-items-center">
+                                        <!-- Date Filtration -->
+                                        <select id="confirmsYearFilter" class="form-select" style="width: 150px;">
+                                            <option value="" selected>Year</option>
+                                            <!-- Populate with years dynamically -->
+                                        </select>
+
+                                        <select id="confirmsMonthFilter" class="form-select" style="width: 150px;">
+                                            <option value="" selected>Month</option>
+                                            <option value="01">January</option>
+                                            <option value="02">February</option>
+                                            <option value="03">March</option>
+                                            <option value="04">April</option>
+                                            <option value="05">May</option>
+                                            <option value="06">June</option>
+                                            <option value="07">July</option>
+                                            <option value="08">August</option>
+                                            <option value="09">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+
+                                        <button id="confirmsFilterByDate" class="btn btn-primary mx-2 mb-0">Filter</button>
+                                        <button id="confirmsResetFilters" class="btn btn-secondary mr-2 mb-0">Reset</button>
+                                    </div>
+                                    <div class="table-responsive p-0">
+                                        <table class="table align-items-center mb-0" id="ConfirmedPackagesTable">
+                                            <thead class="bg-gray-100">
+                                                <tr style="text-align: center;">
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7">For User</th>
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Package Name</th>
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">From City</th>
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">To City</th>
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Number of Guests</th>
+                                                    <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">Total Paid</th>
+                                                    <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Created At</th>
+                                                    <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Due date</th>
+                                                    <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Ends At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($confirms as $key => $confirm)
+                                                <tr data-total-purchased="{{ $confirm->no_of_guests * $confirm->Package->price_per_person }}">
+                                                    <td>
+                                                        <div class="d-flex px-2 py-1">
+                                                            <div class="d-flex flex-column justify-content-center ms-1">
+                                                                <h6 class="mb-0 text-sm font-weight-semibold">{{ $confirm->User->name }}</h6>
+                                                                <p class="text-sm text-secondary mb-0">{{ $confirm->User->email }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex px-2 py-1">
+                                                            <div class="d-flex flex-column justify-content-center ms-1">
+                                                                <h6 class="mb-0 text-sm font-weight-semibold">{{ $confirm->Package->name }}</h6>
+                                                                <p class="text-sm text-secondary mb-0">{{ $confirm->Package->name_ar }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-sm text-dark font-weight-semibold mb-0">From: {{ $confirm->Package->From->name }}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-sm text-dark font-weight-semibold mb-0">To: {{ $confirm->Package->To->name }}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $confirm->no_of_guests }}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-sm text-dark text-center font-weight-semibold mb-0">{{ $confirm->no_of_guests * $confirm->Package->price_per_person }}</p>
+                                                    </td>
+                                                    <td class="align-middle text-center" data-date="{{ $confirm->created_at->toDateString() }}">
+                                                        <span class="text-secondary text-sm font-weight-normal">{{ $confirm->created_at->toDateString() }}</span>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <span class="text-secondary text-sm font-weight-normal">{{ $confirm->due_date }}</span>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <span class="text-secondary text-sm font-weight-normal">{{ $confirm->end_date }}</span>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="border-top py-3 px-3 d-flex align-items-center">
+                                        <p class="font-weight-semibold mb-0 text-dark text-sm confirmsPaging"></p>
+                                        <div class="ms-auto">
+                                            <button class="btn btn-sm btn-white mb-0 confirmPrevious">Previous</button>
+                                            <button class="btn btn-sm btn-white mb-0 confirmNext">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -334,28 +444,40 @@
 
         const searchInput           = document.getElementById("searchInput");
         const table                 = document.getElementById("PackagesTable");
+        const ConfirmsTable         = document.getElementById("ConfirmedPackagesTable");
         const tableRows             = Array.from(table.querySelectorAll("tbody tr"));
+        const ConfirmsTableRows     = Array.from(ConfirmsTable.querySelectorAll("tbody tr"));
 
         const yearFilter            = document.getElementById("yearFilter");
         const monthFilter           = document.getElementById("monthFilter");
         const filterButton          = document.getElementById("filterByDate");
 
+        const confirmsYearFilter    = document.getElementById("confirmsYearFilter");
+        const confirmsMonthFilter   = document.getElementById("confirmsMonthFilter");
+        const confirmsFilterButton  = document.getElementById("confirmsFilterByDate");
+
         const pageInfo              = document.querySelector(".paging");
+        const confirmsPageInfo      = document.querySelector(".confirmsPaging");
         const prevButton            = document.querySelector(".previous");
         const nextButton            = document.querySelector(".next");
+        const confirmsPrevButton    = document.querySelector(".confirmPrevious");
+        const confirmsNextButton    = document.querySelector(".confirmNext");
 
         const totalIncomeCard       = document.getElementById("totalIncomeCard");
         const totalPackagesCard     = document.getElementById("totalPackagesCard");
         const systemRevenueCard     = document.getElementById("systemRevenueCard");
 
-        let filteredRows = [...tableRows]; // Rows currently visible (filtered or searched)
-        let currentFilter = "all"; // Current filter type
-        let currentPage = 1;
-        const rowsPerPage = 10;
+        let filteredRows         = [...tableRows]; // Rows currently visible (filtered or searched)
+        let ConfirmsFilteredRows = [...ConfirmsTableRows]; // Rows currently visible (filtered or searched)
+        let currentFilter        = "all"; // Current filter type
+        let currentPage          = 1;
+        let currentConfirmsPage  = 1;
+        const rowsPerPage        = 10;
 
         // Populate year dropdown based on available data
         const populateYears = () => {
             const years = new Set();
+            
             tableRows.forEach(row => {
                 const dateCell = row.querySelector("td[data-date]");
                 if (dateCell) {
@@ -373,6 +495,27 @@
             });
         };
 
+        // Populate year dropdown based on available data
+        const confirmsPopulateYears = () => {
+            const years = new Set();
+            
+            ConfirmsTableRows.forEach(row => {
+                const dateCell = row.querySelector("td[data-date]");
+                if (dateCell) {
+                    const year = dateCell.getAttribute("data-date").slice(0, 4); // Extract year from "YYYY-MM-DD"
+                    years.add(year);
+                }
+            });
+
+            // Sort years in descending order
+            Array.from(years).sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement("option");
+                option.value = year;
+                option.textContent = year;
+                confirmsYearFilter.appendChild(option);
+            });
+        };
+
         // Function to update the table display based on the current page
         const updateTable = () => {
             const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
@@ -386,8 +529,23 @@
             prevButton.disabled = currentPage === 1;
             nextButton.disabled = currentPage === totalPages || totalPages === 0;
 
-            // Update statistics on the cards
-            updateStats(filteredRows);
+            updatePackageStats(filteredRows);
+        };
+
+        // Function to update the table display based on the current page
+        const updateConfirmsTable = () => {
+            const totalPages = Math.ceil(ConfirmsFilteredRows.length / rowsPerPage);
+            const startIndex = (currentConfirmsPage - 1) * rowsPerPage;
+            const endIndex   = currentConfirmsPage * rowsPerPage;
+
+            ConfirmsTableRows.forEach(row => (row.style.display = "none")); // Hide all rows
+            ConfirmsFilteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = "")); // Show only rows for the current page
+
+            confirmsPageInfo.textContent = `Page ${currentConfirmsPage} of ${totalPages}`;
+            confirmsPrevButton.disabled = currentConfirmsPage === 1;
+            confirmsNextButton.disabled = currentConfirmsPage === totalPages || totalPages === 0;
+
+            updateStats(ConfirmsFilteredRows);
         };
 
         // Filter table by type (e.g., all, basic)
@@ -437,17 +595,42 @@
             updateTable();
         };
 
-        // Update the statistics on the four cards
-        const updateStats = (filteredRows) => {
-            let totalIncome       = 0;
+        // Filter table by date
+        const confirmsFilterTableByDate = (year, month) => {
+            const formattedDate = `${year}-${month}`;
+
+            ConfirmsFilteredRows = ConfirmsFilteredRows.filter(row => {
+                const dateCell = row.querySelector("td[data-date]");
+                if (dateCell) {
+                    const cellDate = dateCell.getAttribute("data-date").slice(0, 7); // Get "YYYY-MM"
+                    return cellDate === formattedDate;
+                }
+                return false;
+            });
+
+            currentConfirmsPage = 1;
+            updateConfirmsTable();
+        };
+
+        const updatePackageStats = (filteredRows) => {
             let totalPackages     = 0;
-            let systemRevenue     = 0;
 
             filteredRows.forEach(row => {
+                totalPackages++; // Increment total packages count (each row represents a package)
+            });
+
+            totalPackagesCard.textContent  = `${totalPackages}`;
+        };
+
+        // Update the statistics on the four cards
+        const updateStats = (ConfirmsFilteredRows) => {
+            let totalIncome       = 0;
+            let systemRevenue     = 0;
+
+            ConfirmsFilteredRows.forEach(row => {
                 const totalPurchased = parseFloat(row.getAttribute("data-total-purchased")) || 0; // Get total_purchased from row attribute
                 
                 totalIncome += totalPurchased; // Assuming total_income is total_purchased for the given row
-                totalPackages++; // Increment total packages count (each row represents a package)
             });
             // Select the <h4> element using its id
             const element = document.getElementById('companyCommission');
@@ -458,7 +641,6 @@
             
             // Update the card values
             totalIncomeCard.textContent    = `$${totalIncome.toFixed(2)}`;
-            totalPackagesCard.textContent  = `${totalPackages}`;
             systemRevenueCard.textContent  = `$${systemRevenue.toFixed(2)}`;
         };
 
@@ -474,6 +656,16 @@
             updateTable();
         };
 
+        // Reset filters to show the original table
+        const confirmsResetFilters = () => {
+            confirmsYearFilter.value = "";
+            confirmsMonthFilter.value = "";
+
+            ConfirmsFilteredRows = ConfirmsTableRows;
+            currentConfirmsPage  = 1;
+            updateConfirmsTable();
+        };
+
         // Event listener for filter buttons
         filterAll.addEventListener("click", () => filterTable("all"));
         filterBasic.addEventListener("click", () => filterTable("basic"));
@@ -481,13 +673,14 @@
         filterFullCourse.addEventListener("click", () => filterTable("full_course"));
 
         document.getElementById("resetFilters").addEventListener("click", resetFilters);
+        document.getElementById("confirmsResetFilters").addEventListener("click", confirmsResetFilters);
 
         // Event listener for search input
         searchInput.addEventListener("input", searchTable);
 
         // Event listener for date filter
         filterButton.addEventListener("click", () => {
-            const selectedYear = yearFilter.value;
+            const selectedYear  = yearFilter.value;
             const selectedMonth = monthFilter.value;
 
             if (!selectedYear || !selectedMonth) {
@@ -496,6 +689,19 @@
             }
 
             filterTableByDate(selectedYear, selectedMonth);
+        });
+
+        // Event listener for date filter
+        confirmsFilterButton.addEventListener("click", () => {
+            const selectedYear  = confirmsYearFilter.value;
+            const selectedMonth = confirmsMonthFilter.value;
+
+            if (!selectedYear || !selectedMonth) {
+                alert("Please select both a year and a month!");
+                return;
+            }
+
+            confirmsFilterTableByDate(selectedYear, selectedMonth);
         });
 
         // Event listener for pagination buttons
@@ -514,9 +720,27 @@
             }
         });
 
+        // Event listener for pagination buttons
+        confirmsPrevButton.addEventListener("click", () => {
+            if (currentConfirmsPage > 1) {
+                currentConfirmsPage--;
+                updateTable();
+            }
+        });
+
+        confirmsNextButton.addEventListener("click", () => {
+            const totalPages = Math.ceil(ConfirmsFilteredRows.length / rowsPerPage);
+            if (currentConfirmsPage < totalPages) {
+                currentConfirmsPage++;
+                updateTable();
+            }
+        });
+
         // Initialize table and populate year filter
         populateYears();
+        confirmsPopulateYears();
         updateTable();
+        updateConfirmsTable();
     });
 </script>
 @stop

@@ -50,10 +50,11 @@ class CompanyController extends Controller
     {
         $result   = $this->company_service->findOne($id);
 
-        $company  = $result['company'];
-        $packages = $result['packages'];
+        $company            = $result['company'];
+        $packages           = $result['packages'];
+        $confirms = $result['confirms'];
         
-        return view('pages/company', compact('company', 'packages'));
+        return view('pages/company', compact('company', 'packages', 'confirms'));
     }
 
     /**
