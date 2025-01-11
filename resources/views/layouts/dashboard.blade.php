@@ -18,7 +18,9 @@
         <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
         <!-- CSS Files -->
         <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
-        
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         @yield('CSS')
 
     </head>
@@ -49,53 +51,52 @@
         
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Get all nav-link elements
                 const navLinks = document.querySelectorAll(".nav-link");
 
-                // Remove "active" class from all links and set it to the current one based on URL
                 navLinks.forEach(link => {
-                    // Check if the href of the link matches the current URL
                     if (link.href === window.location.href) {
                         link.classList.add("active");
                     } else {
                         link.classList.remove("active");
                     }
 
-                    // Add click event listener for client-side navigation
                     link.addEventListener("click", function () {
-                        navLinks.forEach(l => l.classList.remove("active")); // Remove "active" from others
-                        this.classList.add("active"); // Add "active" to the clicked link
+                        navLinks.forEach(l => l.classList.remove("active"));
+                        this.classList.add("active");
                     });
                 });
 
-                // Get the current URL path
                 const path = window.location.pathname;
-
-                // Split the path into segments based on '/'
                 const pathSegments = path.split('/').filter(segment => segment !== '');
-
-                // Initialize breadcrumb
                 let breadcrumbHTML = `<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Dashboard</a></li>`;
-                let title          = 'Dashboard';  // Default title
+                let title = 'Dashboard';
 
-                // Generate the breadcrumb based on the path
                 pathSegments.forEach((segment, index) => {
-                    // Capitalize the segment (for example 'companies' becomes 'Companies')
-                    const capitalizedSegment = segment.charAt(0).toUpperCase() + segment.slice(1);
+                    let displaySegment = segment.charAt(0).toUpperCase() + segment.slice(1);
 
-                    // If it's the last segment, set it as active
+                    // Replace "offers" with "Requests"
+                    if (segment.toLowerCase() === 'offers') {
+                        displaySegment = 'Requests';
+                    }
+
                     if (index === pathSegments.length - 1) {
-                        breadcrumbHTML += `<li class="breadcrumb-item text-sm text-dark active" aria-current="page">${capitalizedSegment}</li>`;
-                        title = `${capitalizedSegment} ${title !== 'Dashboard' ? ' ' + title : ''}`;  // Update title for the last segment
+                        // Check if the company name is available
+                        const companyNameElement = document.getElementById('page-data');
+                        const companyName = companyNameElement ? companyNameElement.getAttribute('data-company-name') : null;
+
+                        const displayName = companyName && displaySegment === '1' ? companyName : displaySegment;
+
+                        breadcrumbHTML += `<li class="breadcrumb-item text-sm text-dark active" aria-current="page">${displayName}</li>`;
+                        title = displayName; // Set title to the company name or last segment
                     } else {
-                        breadcrumbHTML += `<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">${capitalizedSegment}</a></li>`;
+                        breadcrumbHTML += `<li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">${displaySegment}</a></li>`;
                     }
                 });
 
-                // Update the breadcrumb HTML and title
                 document.getElementById('breadcrumb').innerHTML = breadcrumbHTML;
                 document.getElementById('breadcrumb-title').innerText = title;
             });
+
 
             var win = navigator.platform.indexOf('Win') > -1;
             if (win && document.querySelector('#sidenav-scrollbar')) {

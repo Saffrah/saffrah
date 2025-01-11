@@ -292,21 +292,22 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Select all filter buttons
-        const filterAll = document.getElementById('filter-all');
+        const filterAll      = document.getElementById('filter-all');
         const filterVerified = document.getElementById('filter-verified');
-        const filterPending = document.getElementById('filter-pending');
-        const searchInput = document.getElementById('searchInput');
-        const table = document.getElementById('companiesTable');
-        const tableRows = Array.from(table.querySelectorAll('tbody tr')); // Get all rows from the table body
+        const filterPending  = document.getElementById('filter-pending');
 
-        let filteredRows = [...tableRows]; // Rows currently visible (filtered or searched)
-        let currentFilter = 'all'; // Keep track of the active filter
-        const rowsPerPage = 10; // Maximum rows per page
-        let currentPage = 1; // Default current page
+        const searchInput    = document.getElementById('searchInput');
+        const table          = document.getElementById('companiesTable');
+        const tableRows      = Array.from(table.querySelectorAll('tbody tr')); // Get all rows from the table body
 
-        const pageInfo = document.querySelector('.paging'); // Page info text
-        const prevButton = document.querySelector('.previous'); // Previous button
-        const nextButton = document.querySelector('.next'); // Next button
+        let filteredRows     = [...tableRows]; // Rows currently visible (filtered or searched)
+        let currentFilter    = 'all'; // Keep track of the active filter
+        const rowsPerPage    = 10; // Maximum rows per page
+        let currentPage      = 1; // Default current page
+
+        const pageInfo       = document.querySelector('.paging'); // Page info text
+        const prevButton     = document.querySelector('.previous'); // Previous button
+        const nextButton     = document.querySelector('.next'); // Next button
 
         // Function to update the table based on the current page
         function updateTable() {
@@ -551,10 +552,10 @@
     });
 
     // Variables for the modal and buttons
-    const deleteModal = document.getElementById('delete-modal');
+    const deleteModal         = document.getElementById('delete-modal');
     const confirmDeleteButton = document.getElementById('confirm-delete');
-    const cancelDeleteButton = document.getElementById('cancel-delete');
-    const loader = document.getElementById('loader');
+    const cancelDeleteButton  = document.getElementById('cancel-delete');
+    const loader              = document.getElementById('loader');
 
     // Store the company ID to delete
     let companyIdToDelete = null;

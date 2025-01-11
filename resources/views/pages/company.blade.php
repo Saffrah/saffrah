@@ -8,7 +8,7 @@
 @stop
 
 @section('breadcrumbData')
-    <div id="company-breadcrumb" data-company-name="{{ $company->name }}"></div>
+    <div id="page-data" data-company-name="{{ $company->name ?? '' }}"></div>
 @endsection
 
 @section('content')
@@ -325,6 +325,8 @@
 @section('JavaScript')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const companyName           = "{{ $company->name ?? '' }}";
+        
         const filterAll             = document.getElementById("filter-all");
         const filterBasic           = document.getElementById("filter-basic");
         const filterHalfBoard       = document.getElementById("filter-half_board");
