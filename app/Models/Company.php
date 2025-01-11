@@ -55,8 +55,8 @@ class Company extends Authenticatable
         return $this->hasMany(Package::class);    
     }
 
-    public function Files()
+    public function Files() 
     {
-        return $this->hasMany(FileManager::class, 'model');
+        return $this->morphMany(FileManager::class, 'model');    
     }
 }
