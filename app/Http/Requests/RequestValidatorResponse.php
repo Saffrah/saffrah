@@ -19,7 +19,7 @@ class RequestValidatorResponse extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'response_code'    => 422,
-                'response_message' => 'The given data was invalid.',
+                'response_message' => $this->validator->errors()->first(),
                 'response_data'    => $this->validator->errors(),
             ], 422)
         );
