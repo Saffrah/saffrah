@@ -125,7 +125,9 @@ class PackageRepository
         }
 
         foreach ($countries as $key => $country) {
-            if(empty($country['cities'])) unset($countries[$key]);
+            if($country['cities']->isEmpty()) {
+                unset($countries[$key]);
+            } 
         }
 
         return $countries;
