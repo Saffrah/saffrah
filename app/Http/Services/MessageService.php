@@ -2,12 +2,12 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Facades\Notification;
 use App\Http\Repositories\MessageRepository;
 use App\Notifications\SendPushNotification;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Auth;
 
 use App\Models\Company;
+use App\Models\Admin;
 use App\Models\User;
 
 class MessageService
@@ -27,13 +27,16 @@ class MessageService
     public function save($request) 
     {
         if($request['type'] == 'companies') {
-            $users = Company::all();
+            $user = Company::first();
+        }
+        elseif($request['type'] == 'users') {
+            $user = User::first();
         }
         else {
-            $users = User::all();
+            $user = Admin::first();
         }
 
-        Notification::send($users, new SendPushNotification($request['title'], $request['message']));
+        Notification::send($user, new SendPushNotification($request['title'], $request['message'], $request['type']));
 
         return $this->message_repository->create($request);
     }

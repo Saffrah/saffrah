@@ -25,7 +25,7 @@ class SendMessageRequest extends FormRequest
         return [
             'title'   => 'required|string|max:50',
             'message' => 'required|string|max:250',
-            'type'    => 'required|string|in:companies,users'
+            'type'    => 'required|string|in:companies,users,admin'
         ];
     }
 }
