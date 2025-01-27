@@ -33,9 +33,7 @@ class MessageService
             $users = User::all();
         }
 
-        foreach ($users as $key => $user) {
-            Notification::send($user, new SendPushNotification($request['title'], $request['message']));
-        }
+        Notification::send($users, new SendPushNotification($request['title'], $request['message']));
 
         return $this->message_repository->create($request);
     }
