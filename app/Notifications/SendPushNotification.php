@@ -11,6 +11,7 @@ class SendPushNotification extends Notification
 {
     use Queueable;
 
+    protected $type;
     protected $title;
     protected $message;
 
@@ -19,8 +20,9 @@ class SendPushNotification extends Notification
      *
      * @param $title
      */
-    public function __construct($title, $message)
+    public function __construct($title, $message, $type)
     {
+        $this->type    = $type;
         $this->title   = $title;
         $this->message = $message;
     }
@@ -45,7 +47,7 @@ class SendPushNotification extends Notification
     public function toPusher($notifiable)
     {
         return [
-            'interest' => 'admin_int',
+            'interest' => $this->type.'_int',
             'fcm' => [
                 'notification' => [
                     'title' => $this->title,

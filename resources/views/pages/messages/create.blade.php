@@ -77,6 +77,7 @@
                                 <option value="" {{ old('type') === null ? 'selected' : '' }}>Select Type</option>
                                 <option value="companies" {{ old('type') === 'companies' ? 'selected' : '' }}>Companies</option>
                                 <option value="users" {{ old('type') === 'users' ? 'selected' : '' }}>Users</option>
+                                <option value="admin" {{ old('type') === 'admin' ? 'selected' : '' }}>All</option>
                             </select>
                             @error('type')
                                 <small id="type-error" class="error-text">{{ $message }}</small>
