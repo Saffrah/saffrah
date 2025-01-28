@@ -143,7 +143,7 @@ class PackageService
             return [
                 'response_code'    => 200,
                 'response_message' => 'Packages fitched successfully !', 
-                'response_data'    => $results
+                'response_data'    => array_values($results)
             ];
         }
 
