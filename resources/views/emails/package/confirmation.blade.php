@@ -8,9 +8,6 @@ Thank you for booking with us!
 **Number of Guests:**  {{ $data['guests'] }}  
 **Total Amount    :** ${{ number_format($data['total_amount'], 2) }}  
 
-@component('mail::button', ['url' => config('app.url')])
-View Your Booking
-@endcomponent
 
 We look forward to serving you soon!
 
