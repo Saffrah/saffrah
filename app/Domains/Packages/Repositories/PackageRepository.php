@@ -199,7 +199,7 @@ class PackageRepository
         $package = $this->model->where('id', $request['package_id'])->first();
        
         if($package) {
-            return $this->package_confirm_model->create([
+            $confirmation = $this->package_confirm_model->create([
                 'user_id'      => $user->id,
                 'package_id'   => $package->id,
                 'paid_status'  => 1,
@@ -207,6 +207,13 @@ class PackageRepository
                 'end_date'     => $request['end_date'],
                 'no_of_guests' => $request['no_of_guests'],
             ]);
+
+            return [
+                'package_name'     => $package->name,
+                'price_per_person' => $package->price_per_person,
+                'guests'           => $request['no_of_guests'],
+                'total_amount'     => $request['no_of_guests'] * $package->price_per_person,
+            ];
         }
 
         return false;
@@ -215,11 +222,24 @@ class PackageRepository
 
     public function deals($user_id) 
     {
-        return $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
-                           ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                           ->with(['Company', 'Transits', 'Transits.To', 'From', 'To', 'Files'])
-                           ->where('package_confirms.user_id', $user_id)
-                           ->get();    
+        $packages = $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
+                                ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
+                                ->with(['Company', 'Transits', 'Transits.To', 'From', 'To', 'Files', 'Confirms.User.Files'])
+                                ->where('package_confirms.user_id', $user_id)
+                                ->get();
+                                
+        $packages->each(function ($package) {
+            $package->confirms->each(function ($confirm) use ($package) {
+                $filteredFiles = $confirm->user->files->filter(function ($file) use ($package) {
+                    return $file->package_id === $package->id;
+                })->values();
+        
+                // Overwrite the files relationship
+                $confirm->user->setRelation('files', $filteredFiles);
+            });
+        });
+
+        return $packages->toArray();
     }
 
     public function all_user_packages($user_id) 

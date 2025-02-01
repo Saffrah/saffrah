@@ -5,7 +5,9 @@ namespace App\Domains\Packages\Services;
 use App\Domains\Auth\Repositories\AuthRepository;
 use App\Domains\FileManager\Repositories\FileManagerRepository;
 use App\Domains\Packages\Repositories\PackageRepository;
+use App\Mail\PackageConfirmation;
 use App\Notifications\UserOfferAcceptedNotification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class PackageService
@@ -209,9 +211,11 @@ class PackageService
 
     public function confirm($request) 
     {
+        $user    = auth('sanctum')->user();
         $results = $this->package_repository->confirm($request);
         
         if($results) {
+            Mail::to($user->email)->send(new PackageConfirmation($results));
             return [
                 'response_code'    => 200,
                 'response_message' => 'Packages Confirmed successfully !', 
@@ -241,7 +245,7 @@ class PackageService
             return [
                 'response_code'    => 200,
                 'response_message' => 'Deals retrieved successfully !', 
-                'response_data'    => $results->toArray()
+                'response_data'    => $results
             ];
         }
 

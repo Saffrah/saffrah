@@ -49,7 +49,7 @@ class FileManagerRepository
                              ->where('model_type', 'user')
                              ->where('package_id', $package_id)->count();
         
-        return ($count/$no_of_guests) >= 2;
+        return ($count/$no_of_guests) >= 1;
     }
 
 }
