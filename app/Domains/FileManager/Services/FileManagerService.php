@@ -43,16 +43,24 @@ class FileManagerService
                 $model_type = User::class;
             }
 
-            $array     = [
-                'model_id'      => $entity->id,
-                'model_type'    => $model_type,
-                'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
-                'file_name'     => $file_name,
-                'download_link' => '/uploads/'.$file_name
-            ];
-
-            $created  = $this->file_manager_repository->create($array);
-            $uploaded = $created;
+            if($entity) { 
+                $array     = [
+                    'model_id'      => $entity->id,
+                    'model_type'    => $model_type,
+                    'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
+                    'file_name'     => $file_name,
+                    'download_link' => '/uploads/'.$file_name
+                ];
+    
+                $uploaded  = $this->file_manager_repository->create($array);
+            } 
+            else {
+                return [
+                    'response_code'    => 400,
+                    'response_message' => $request['model_type'].' was not found !',
+                    'response_data'    => NULL
+                ];
+            }
         }
   
         if($uploaded) {
@@ -64,7 +72,7 @@ class FileManagerService
         }
 
         return [
-            'response_code'    => 400,
+            'response_code'    => 500,
             'response_message' => 'Uploaded Failed !',
             'response_data'    => NULL
         ];
