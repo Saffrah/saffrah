@@ -34,18 +34,18 @@ class FileManagerService
             
             if($request['model_type'] == 'company') {
                 $entity = Company::find($request['model_id']);
-                $request['model_type'] = Company::class;
+                $model_type = Company::class;
             } elseif($request['model_type'] == 'package') {
                 $entity = Package::find($request['model_id']);
-                $request['model_type'] = Package::class;
+                $model_type = Package::class;
             } elseif ($request['model_type'] == 'user') {
                 $entity = User::find($request['model_id']);
-                $request['model_type'] = User::class;
+                $model_type = User::class;
             }
 
             $array     = [
                 'model_id'      => $entity->id,
-                'model_type'    => $request['model_type'],
+                'model_type'    => $model_type,
                 'package_id'    => isset($request['package_id']) ? $request['package_id'] : NULL,
                 'file_name'     => $file_name,
                 'download_link' => '/uploads/'.$file_name
