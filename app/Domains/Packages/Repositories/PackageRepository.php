@@ -224,25 +224,11 @@ class PackageRepository
     {
         $packages = $this->model->join('package_confirms', 'package_confirms.package_id', 'packages.id')
                                 ->select('packages.*', 'package_confirms.due_date AS confirmed_start_date', 'package_confirms.end_date AS confirmed_end_date', 'package_confirms.no_of_guests AS confirmed_no_of_guests')
-                                ->with([
-                                    'Company',
-                                    'Transits',
-                                    'Transits.To',
-                                    'From',
-                                    'To',
-                                    'Files',
-                                    'Confirms' => function ($query) use ($user_id) {
-                                        $query->where('user_id', $user_id)->with([
-                                            'User' => function ($userQuery) {
-                                                $userQuery->with('Files');
-                                            },
-                                        ]);
-                                    }
-                                ])
+                                ->with(['Company', 'Transits', 'Transits.To', 'From', 'To', 'Files', 'Confirms.User.Files'])
                                 ->where('package_confirms.user_id', $user_id)
                                 ->get();
-                                
-        $packages->each(function ($package) {
+        
+        $packages->each(function ($package) use ($user_id) {
             $package->confirms->each(function ($confirm) use ($package) {
                 $filteredFiles = $confirm->user->files->filter(function ($file) use ($package) {
                     return $file->package_id === $package->id;
@@ -251,6 +237,13 @@ class PackageRepository
                 // Overwrite the files relationship
                 $confirm->user->setRelation('files', $filteredFiles);
             });
+
+            $filteredConfirms = $package->confirms->filter(function ($confirm) use ($user_id) {
+                return $confirm->user_id === $user_id;
+            })->values();
+    
+            // Overwrite the confirms relationship
+            $package->setRelation('confirms', $filteredConfirms);
         });
 
         return $packages->toArray();
