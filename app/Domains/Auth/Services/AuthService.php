@@ -6,13 +6,16 @@ namespace App\Domains\Auth\Services;
 use App\Domains\Auth\Repositories\AuthRepository;
 use App\Domains\Company\Repositories\CompanyRepository;
 use App\Domains\FileManager\Repositories\FileManagerRepository;
+use App\Mail\OtpMail;
 // Models
 use App\Models\Company;
 use App\Models\User;
 // Libraries
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthService
 {
@@ -124,5 +127,74 @@ class AuthService
         return $result;     
     }
 
+    public function forgot_password($request) 
+    {
+        if($request['model_type'] == 'user')
+            $user = User::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
+        else 
+            $user = Company::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
+        
+        if(isset($request['opt'])) 
+        {
+            // Check if OTP is valid
+            $cachedOtp = Cache::get('password_reset_otp_' . $request['model_email']);
+
+            if (!$cachedOtp) {
+                return [
+                    'response_code'    => 400,
+                    'response_message' => 'Your OTP Has expired, please try again',
+                    'response_data'    => []
+                ];
+            }
+
+            if ($cachedOtp != $request['opt']) {
+                return [
+                    'response_code'    => 400,
+                    'response_message' => 'Invalid OTP',
+                    'response_data'    => []
+                ];
+            }
+
+            // Update the user's password
+            $user->password = bcrypt($request['password']);
+            $user->save();
+
+            // Forget OTP from cache
+            Cache::forget('password_reset_otp_' . $request['model_email']);
+
+            return [
+                'response_code'    => 200,
+                'response_message' => 'Your Password rest successfully',
+                'response_data'    => []
+            ];
+        }
+        else {
+            if($user) {
+                // Generate OTP (6 digits)
+                $otp = mt_rand(100000, 999999);
+
+                // Store the OTP in the cache for 10 minutes
+                Cache::put('password_reset_otp_' . $request['model_email'], $otp, 600);
+
+                // Send the OTP to the user's email
+                try {
+                    Mail::to($user->email)->send(new OtpMail($otp));
+                } catch (\Exception $e) {
+                    return [
+                        'response_code'    => 500,
+                        'response_message' => $e->getMessage(),
+                        'response_data'    => []
+                    ];
+                }
+            }
+
+            return [
+                'response_code'    => 200,
+                'response_message' => 'if You account is in our database then check your email for OTP',
+                'response_data'    => []
+            ];
+        }
+        
+    }
 
 }

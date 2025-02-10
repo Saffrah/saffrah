@@ -5,7 +5,7 @@ namespace App\Domains\Auth\Controllers;
 // Requests
 use App\Domains\Auth\Requests\AuthLoginRequest;
 use App\Domains\Auth\Requests\AuthRegisterRequest;
-
+use App\Domains\Auth\Requests\ForgotPasswordRequest;
 // Services
 use App\Domains\Auth\Services\AuthService;
 
@@ -50,6 +50,13 @@ class AuthController extends Controller
     public function verify(Request $request)
     {
         return Company::where('id', $request->id)->update(['email_verified_at' => now()]) ? 'true' : 'false';
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request) 
+    {
+        $response = $this->auth_service->forgot_password($request->validated());
+
+        return response()->json($response);
     }
 
 
