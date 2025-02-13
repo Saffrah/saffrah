@@ -211,6 +211,7 @@ class PackageRepository
             return [
                 'package_name'     => $package->name,
                 'price_per_person' => $package->price_per_person,
+                'start_date'       => $request['start_date'],
                 'guests'           => $request['no_of_guests'],
                 'total_amount'     => $request['no_of_guests'] * $package->price_per_person,
             ];

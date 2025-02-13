@@ -134,7 +134,7 @@ class AuthService
         else 
             $user = Company::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
         
-        if(isset($request['opt'])) 
+        if(isset($request['otp'])) 
         {
             // Check if OTP is valid
             $cachedOtp = Cache::get('password_reset_otp_' . $request['model_email']);
@@ -147,7 +147,7 @@ class AuthService
                 ];
             }
 
-            if ($cachedOtp != $request['opt']) {
+            if ($cachedOtp != $request['otp']) {
                 return [
                     'response_code'    => 400,
                     'response_message' => 'Invalid OTP',
