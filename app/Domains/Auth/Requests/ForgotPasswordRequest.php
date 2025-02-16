@@ -23,7 +23,6 @@ class ForgotPasswordRequest extends FormRequest
     {
         return [
             'model_email' => 'required|string',
-            'model_type'  => 'required|string|in:company,user',
             'otp'         => 'nullable|numeric',
             'password'    => 'required_with_all:otp|string|confirmed'
         ];

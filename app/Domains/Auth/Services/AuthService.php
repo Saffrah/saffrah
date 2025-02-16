@@ -129,9 +129,8 @@ class AuthService
 
     public function forgot_password($request) 
     {
-        if($request['model_type'] == 'user')
-            $user = User::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
-        else 
+        $user = User::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
+        if(!$user)
             $user = Company::where('email', $request['model_email'])->orWhere('phone_number', $request['model_email'])->first();
         
         if(isset($request['otp'])) 
@@ -155,18 +154,27 @@ class AuthService
                 ];
             }
 
-            // Update the user's password
-            $user->password = bcrypt($request['password']);
-            $user->save();
-
-            // Forget OTP from cache
-            Cache::forget('password_reset_otp_' . $request['model_email']);
-
-            return [
-                'response_code'    => 200,
-                'response_message' => 'Your Password rest successfully',
-                'response_data'    => []
-            ];
+            if($user) {
+                // Update the user's password
+                $user->password = bcrypt($request['password']);
+                $user->save();
+                
+                // Forget OTP from cache
+                Cache::forget('password_reset_otp_' . $request['model_email']);
+    
+                return [
+                    'response_code'    => 200,
+                    'response_message' => 'Your Password rest successfully',
+                    'response_data'    => []
+                ];
+            }
+            else {
+                return [
+                    'response_code'    => 400,
+                    'response_message' => 'Your Password rest Failed !',
+                    'response_data'    => []
+                ];
+            }
         }
         else {
             if($user) {
