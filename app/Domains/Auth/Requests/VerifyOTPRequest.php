@@ -4,7 +4,7 @@ namespace App\Domains\Auth\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ForgotPasswordRequest extends FormRequest
+class VerifyOTPRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class ForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => 'required|string',
-            'password' => 'nullable|string|confirmed'
+            'email' => 'required|email',
+            'otp'   => 'required|numeric'
         ];
     }
 }

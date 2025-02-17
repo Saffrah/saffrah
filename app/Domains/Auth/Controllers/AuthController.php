@@ -6,6 +6,7 @@ namespace App\Domains\Auth\Controllers;
 use App\Domains\Auth\Requests\AuthLoginRequest;
 use App\Domains\Auth\Requests\AuthRegisterRequest;
 use App\Domains\Auth\Requests\ForgotPasswordRequest;
+use App\Domains\Auth\Requests\VerifyOTPRequest;
 // Services
 use App\Domains\Auth\Services\AuthService;
 
@@ -59,5 +60,11 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
+    public function verifyOTP(VerifyOTPRequest $request) 
+    {
+        $response = $this->auth_service->verifyOTP($request->validated());
+
+        return response()->json($response);
+    }
 
 }
