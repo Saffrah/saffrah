@@ -17,3 +17,4 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/verify', [AuthController::class, 'verify']);
 Route::post('/forgot_password', [AuthController::class, 'forgotPassword']);
+Route::post('/verify_otp', [AuthController::class, 'verifyOTP']);
