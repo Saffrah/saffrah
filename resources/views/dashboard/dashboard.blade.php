@@ -272,12 +272,12 @@
                         <div class="col-12">
                             <div class="w-100">
                                 <p class="text-sm text-secondary mb-1">Last Month Revenue</p>
-                                <h4 class="mb-2 font-weight-bold">${{$monthly_income->income}}</h4>
+                                <h4 class="mb-2 font-weight-bold">${{$monthly_income->income ?? 0}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('income') != 0 ? round(($monthly_income->income/$yearly_income->sum('income'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from ${{$yearly_income->sum('income')}}</span>
+                                    <span class="text-sm ms-1">from ${{$yearly_income->sum('income') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -298,12 +298,12 @@
                         <div class="col-12">
                             <div class="w-100">
                                 <p class="text-sm text-secondary mb-1">Last Month New Companies</p>
-                                <h4 class="mb-2 font-weight-bold">{{$monthly_income->active_companies}}</h4>
+                                <h4 class="mb-2 font-weight-bold">{{$monthly_income->active_companies ?? 0}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_companies') != 0 ? round(($monthly_income->active_companies/$yearly_income->sum('active_companies'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_companies')}}</span>
+                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_companies') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -323,12 +323,12 @@
                         <div class="col-12">
                             <div class="w-100">
                                 <p class="text-sm text-secondary mb-1">Last Month Published Packages</p>
-                                <h4 class="mb-2 font-weight-bold">{{ $monthly_income->active_packages }}</h4>
+                                <h4 class="mb-2 font-weight-bold">{{ $monthly_income->active_packages ?? 0 }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_packages') != 0 ? round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_packages')}}</span>
+                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_packages') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -348,12 +348,12 @@
                         <div class="col-12">
                             <div class="w-100">
                                 <p class="text-sm text-secondary mb-1">Last Month Purchased Packages</p>
-                                <h4 class="mb-2 font-weight-bold">{{ $monthly_income->confirmed_packages }}</h4>
+                                <h4 class="mb-2 font-weight-bold">{{ $monthly_income->confirmed_packages ?? 0 }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('confirmed_packages') != 0 ? round(($monthly_income->confirmed_packages/$yearly_income->sum('confirmed_packages'))*100, 2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('confirmed_packages')}}</span>
+                                    <span class="text-sm ms-1">from {{$yearly_income->sum('confirmed_packages') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -378,7 +378,7 @@
                         </div> -->
                     </div>
                     <div class="d-sm-flex align-items-center">
-                        <h3 class="mb-4 font-weight-semibold">${{ $yearly_income->sum('income') }}</h3>
+                        <h3 class="mb-4 font-weight-semibold">${{ $yearly_income->sum('income') ?? 0 }}</h3>
                         <span class="badge badge-sm border border-success text-success bg-success border-radius-sm ms-sm-3 px-2">
                             <svg width="9" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M0.46967 4.46967C0.176777 4.76256 0.176777 5.23744 0.46967 5.53033C0.762563 5.82322 1.23744 5.82322 1.53033 5.53033L0.46967 4.46967ZM5.53033 1.53033C5.82322 1.23744 5.82322 0.762563 5.53033 0.46967C5.23744 0.176777 4.76256 0.176777 4.46967 0.46967L5.53033 1.53033ZM5.53033 0.46967C5.23744 0.176777 4.76256 0.176777 4.46967 0.46967C4.17678 0.762563 4.17678 1.23744 4.46967 1.53033L5.53033 0.46967ZM8.46967 5.53033C8.76256 5.82322 9.23744 5.82322 9.53033 5.53033C9.82322 5.23744 9.82322 4.76256 9.53033 4.46967L8.46967 5.53033ZM1.53033 5.53033L5.53033 1.53033L4.46967 0.46967L0.46967 4.46967L1.53033 5.53033ZM4.46967 1.53033L8.46967 5.53033L9.53033 4.46967L5.53033 0.46967L4.46967 1.53033Z" fill="#67C23A"></path>
