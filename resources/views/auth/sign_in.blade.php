@@ -54,6 +54,15 @@
                                 <h3 class="font-weight-black text-dark display-6">Welcome back</h3>
                                 <p class="mb-0">Welcome back! Please enter your details.</p>
                             </div>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <div class="card-body">
                                 <form role="form" action="{{ route('admin.post.login') }}" method="POST">
                                     @csrf
