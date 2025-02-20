@@ -126,7 +126,7 @@
                             <a class="dropdown-item border-radius-md" href="javascript:;">
                                 <div class="d-flex py-1">
                                     <div class="d-flex flex-column justify-content-center">
-                                        <a href="https://www.creative-tim.com" class="nav-link text-xs text-muted">Profile</a>
+                                        <a href="#" class="nav-link text-xs text-muted">Profile</a>
                                     </div>
                                 </div>
                             </a>
