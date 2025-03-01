@@ -42,8 +42,8 @@ class PackageRepository
     public function get_cities() 
     {
         return $this->country_model->select(
-            'id', 'name', 'iso3'
-        )->with(['Cities:id,name,country_id'])->get()->toArray();
+            'id', 'name', 'name_ar', 'iso3'
+        )->with(['Cities:id,name,name_ar,country_id'])->get()->toArray();
     }
 
     public function store($request) 
