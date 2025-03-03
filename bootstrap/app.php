@@ -1,12 +1,11 @@
 <?php
 
-use App\Http\Middleware\CompanyMiddleware;
-use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\UserMiddleware;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\LocaleMiddleware;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+
 
 return Application::configure(basePath: dirname(__DIR__))
         ->withRouting(
@@ -44,6 +43,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register your middleware here
         $middleware->alias([
             'role' => App\Http\Middleware\CheckRole::class
+        ]);
+
+        $middleware->appendToGroup('web', [
+            LocaleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

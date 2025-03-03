@@ -6,8 +6,8 @@
         <div class="col-md-12">
             <div class="d-md-flex align-items-center mb-3 mx-2">
                 <div class="mb-md-0 mb-3">
-                    <h3 class="font-weight-bold mb-0">Hello, {{ $admin->name }}</h3>
-                    <p class="mb-0">Here's some statistics About you income!</p>
+                    <h3 class="font-weight-bold mb-0">{{ __('dashboard.hello', ['name' => $admin->name]) }}</h3>
+                    <p class="mb-0">{{ __('dashboard.statement') }}</p>
                 </div>
                 <!-- <button type="button" class="btn btn-sm btn-white btn-icon d-flex align-items-center mb-0 ms-md-auto mb-sm-0 mb-2 me-2">
                     <span class="btn-inner--icon">
@@ -271,13 +271,13 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="w-100">
-                                <p class="text-sm text-secondary mb-1">Last Month Revenue</p>
+                                <p class="text-sm text-secondary mb-1">{{ __('dashboard.revenue') }}</p>
                                 <h4 class="mb-2 font-weight-bold">${{$monthly_income->income ?? 0}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('income') != 0 ? round(($monthly_income->income/$yearly_income->sum('income'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from ${{$yearly_income->sum('income') ?? 0}}</span>
+                                    <span class="text-sm ms-1">{{__('dashboard.from')}} ${{$yearly_income->sum('income') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -297,13 +297,13 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="w-100">
-                                <p class="text-sm text-secondary mb-1">Last Month New Companies</p>
+                                <p class="text-sm text-secondary mb-1">{{ __('dashboard.new_companies') }}</p>
                                 <h4 class="mb-2 font-weight-bold">{{$monthly_income->active_companies ?? 0}}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_companies') != 0 ? round(($monthly_income->active_companies/$yearly_income->sum('active_companies'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_companies') ?? 0}}</span>
+                                    <span class="text-sm ms-1">{{__('dashboard.from')}} {{$yearly_income->sum('active_companies') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -322,13 +322,13 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="w-100">
-                                <p class="text-sm text-secondary mb-1">Last Month Published Packages</p>
+                                <p class="text-sm text-secondary mb-1">{{ __('dashboard.published_packages') }}</p>
                                 <h4 class="mb-2 font-weight-bold">{{ $monthly_income->active_packages ?? 0 }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('active_packages') != 0 ? round(($monthly_income->active_packages/$yearly_income->sum('active_packages'))*100,2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('active_packages') ?? 0}}</span>
+                                    <span class="text-sm ms-1">{{__('dashboard.from')}} {{$yearly_income->sum('active_packages') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -347,13 +347,13 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="w-100">
-                                <p class="text-sm text-secondary mb-1">Last Month Purchased Packages</p>
+                                <p class="text-sm text-secondary mb-1">{{ __('dashboard.purchased_packages') }}</p>
                                 <h4 class="mb-2 font-weight-bold">{{ $monthly_income->confirmed_packages ?? 0 }}</h4>
                                 <div class="d-flex align-items-center">
                                     <span class="text-sm text-success font-weight-bolder">
                                     <i class="fa fa-chevron-up text-xs me-1"></i>{{$yearly_income->sum('confirmed_packages') != 0 ? round(($monthly_income->confirmed_packages/$yearly_income->sum('confirmed_packages'))*100, 2) : 0}}%
                                     </span>
-                                    <span class="text-sm ms-1">from {{$yearly_income->sum('confirmed_packages') ?? 0}}</span>
+                                    <span class="text-sm ms-1">{{__('dashboard.from')}} {{$yearly_income->sum('confirmed_packages') ?? 0}}</span>
                                 </div>
                             </div>
                         </div>
@@ -368,8 +368,8 @@
                 <div class="card-header pb-0">
                     <div class="d-sm-flex align-items-center mb-3">
                         <div>
-                            <h6 class="font-weight-semibold text-lg mb-0">Overview of Past Year Income</h6>
-                            <p class="text-sm mb-sm-0 mb-2">Here you have details about the past year from the last month Income.</p>
+                            <h6 class="font-weight-semibold text-lg mb-0">{{ __('dashboard.yearly_income') }}</h6>
+                            <p class="text-sm mb-sm-0 mb-2">{{ __('dashboard.yearly_income_statement') }}</p>
                         </div>
                         <!-- <div class="ms-auto d-flex">
                             <button type="button" class="btn btn-sm btn-white mb-0 me-2">

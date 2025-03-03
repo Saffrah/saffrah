@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('admin.get.login');
 });
+ 
+Route::get('/lang/{locale}', function (string $locale) {
+    if (! in_array($locale, ['en', 'ar'])) {
+        abort(400);
+    }
+ 
+    session()->put('locale', $locale);
+    return redirect()->route('dashboard'); 
+});
 
 Route::get('/login', [AdminController::class, 'getlogin'])->name('admin.get.login');
 Route::post('/login', [AdminController::class, 'postlogin'])->name('admin.post.login');
