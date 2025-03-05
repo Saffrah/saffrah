@@ -36,6 +36,20 @@ class AuthService
 
     public function register($request) 
     {
+        // Remove Egypt (+20) or Saudi Arabia (+966) country code
+        $phone_number = preg_replace('/^(\+?20|0020|\+?966|00966)/', '', $request['phone_number']);
+
+        // Ensure the correct format for Egypt (11 digits) and Saudi Arabia (starting with 05)
+        if (preg_match('/^1\d{9}$/', $phone_number)) {
+            // Egyptian number (already starts with 01)
+            $phone_number = '0' . ltrim($phone_number, '0'); // Ensure single leading 0
+        } elseif (preg_match('/^5\d{8}$/', $phone_number)) {
+            // Saudi number (starts with 5, add missing 0)
+            $phone_number = '0' . $phone_number;
+        }
+
+        $request['phone_number'] = $phone_number;
+
         if($request['user_type'] == 'user') {
             $result = $this->auth_repository->register($request);
             $result['token']    = $result->createToken('User', ['role:user'])->plainTextToken; 
@@ -97,6 +111,22 @@ class AuthService
 
     function login($request) 
     {
+        if(is_numeric($request['email'])) {
+            // Remove Egypt (+20) or Saudi Arabia (+966) country code
+            $phone_number = preg_replace('/^(\+?20|0020|\+?966|00966)/', '', $request['email']);
+
+            // Ensure the correct format for Egypt (11 digits) and Saudi Arabia (starting with 05)
+            if (preg_match('/^1\d{9}$/', $phone_number)) {
+                // Egyptian number (already starts with 01)
+                $phone_number = '0' . ltrim($phone_number, '0'); // Ensure single leading 0
+            } elseif (preg_match('/^5\d{8}$/', $phone_number)) {
+                // Saudi number (starts with 5, add missing 0)
+                $phone_number = '0' . $phone_number;
+            }
+
+            $request['email'] = $phone_number;
+        }
+
         $user = User::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
 
         if($user) { 

@@ -44,11 +44,26 @@ class EmailOrPhoneRule implements DataAwareRule, ValidationRule
             $fail('it must be a valid email !');
             $passed = false;
         }
+        elseif(is_numeric($value)) {
+            // Remove Egypt (+20) or Saudi Arabia (+966) country code
+            $value = preg_replace('/^(\+?20|0020|\+?966|00966)/', '', $value);
 
-        if(is_numeric($value) && ! preg_match('/^\d{11}$/', $value)) {
-            $type = 'phone';
-            $fail('it must be a valid Phone number !');
-            $passed = false;
+            // Ensure the correct format for Egypt (11 digits) and Saudi Arabia (starting with 05)
+            if (preg_match('/^1\d{9}$/', $value)) {
+                // Egyptian number (already starts with 01)
+                $value = '0' . ltrim($value, '0'); // Ensure single leading 0
+            } elseif (preg_match('/^5\d{8}$/', $value)) {
+                // Saudi number (starts with 5, add missing 0)
+                $value = '0' . $value;
+            }
+
+            // Validate the final phone number
+            if (preg_match('/^01\d{9}$/', $value) || preg_match('/^05\d{8}$/', $value)) {
+                $type = 'phone';
+            } else {
+                $fail('It must be a valid phone number!');
+                $passed = false;
+            }
         }
 
         if($passed) {
