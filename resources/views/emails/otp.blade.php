@@ -9,7 +9,7 @@ Thanks,<br>
 {{ config('app.name') }}
 
 @component('mail::panel')
-    If you did not request a password reset, please ignore this email.
+    If you did not ask for this reset, just ignore this email.
 @endcomponent
 
 @component('mail::footer')
