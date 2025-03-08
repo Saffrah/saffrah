@@ -36,22 +36,31 @@ class PhoneNumberUniqueRule implements DataAwareRule, ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // Remove Egypt (+20) or Saudi Arabia (+966) country code
-        $value = preg_replace('/^(\+?20|0020|\+?966|00966)/', '', $value);
+        // Remove non-digit characters (e.g., "+", "-")
+        $value = preg_replace('/\D/', '', $value);
 
-        // Ensure the correct format for Egypt (11 digits) and Saudi Arabia (starting with 05)
-        if (preg_match('/^1\d{9}$/', $value)) {
-            // Egyptian number (already starts with 01)
-            $value = '0' . ltrim($value, '0'); // Ensure single leading 0
-        } elseif (preg_match('/^5\d{8}$/', $value)) {
-            // Saudi number (starts with 5, add missing 0)
-            $value = '0' . $value;
+        if (preg_match('/^(?:20)?(1\d{9})$/', $value, $matches)) {
+            // Egyptian number: Must be exactly 10 digits after +20 or start with 01
+            $value = '0' . $matches[1]; // Ensure format: 01XXXXXXXXX
+            $type  = 'phone';
+        } elseif (preg_match('/^(?:966)?(5\d{8})$/', $value, $matches)) {
+            // Saudi number: Must be exactly 9 digits after +966 or start with 05
+            $value = '0' . $matches[1]; // Ensure format: 05XXXXXXXX
+            $type  = 'phone';
+        } elseif (preg_match('/^01\d{9}$/', $value)) {
+            // Direct Egyptian number (without country code)
+            $type = 'phone';
+        } elseif (preg_match('/^05\d{8}$/', $value)) {
+            // Direct Saudi number (without country code)
+            $type = 'phone';
+        } else {
+            $fail('It must be a valid Egyptian or Saudi phone number!');
         }
 
         // Validate the final phone number
         if (preg_match('/^01\d{9}$/', $value) || preg_match('/^05\d{8}$/', $value)) {
             $phone = $value;
-
+            
             if($this->data['user_type'] == 'company') {
                 $user = Company::where('phone_number', $phone)->first();
             }

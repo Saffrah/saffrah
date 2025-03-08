@@ -38,51 +38,54 @@ class EmailOrPhoneRule implements DataAwareRule, ValidationRule
     {
         $type   = '';
         $passed = true;
+        $originalValue = $value; // Store original for database lookup
 
-        if (! filter_var($value, FILTER_VALIDATE_EMAIL) && ! is_numeric($value)) {
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL) && !is_numeric($value)) {
             $type = 'email';
-            $fail('it must be a valid email !');
+            $fail('It must be a valid email!');
             $passed = false;
-        }
-        elseif(is_numeric($value)) {
-            // Remove Egypt (+20) or Saudi Arabia (+966) country code
-            $value = preg_replace('/^(\+?20|0020|\+?966|00966)/', '', $value);
+        } elseif (is_numeric($value)) {
+            // Remove non-digit characters (e.g., "+", "-")
+            $value = preg_replace('/\D/', '', $value);
 
-            // Ensure the correct format for Egypt (11 digits) and Saudi Arabia (starting with 05)
-            if (preg_match('/^1\d{9}$/', $value)) {
-                // Egyptian number (already starts with 01)
-                $value = '0' . ltrim($value, '0'); // Ensure single leading 0
-            } elseif (preg_match('/^5\d{8}$/', $value)) {
-                // Saudi number (starts with 5, add missing 0)
-                $value = '0' . $value;
-            }
-
-            // Validate the final phone number
-            if (preg_match('/^01\d{9}$/', $value) || preg_match('/^05\d{8}$/', $value)) {
+            if (preg_match('/^(?:20)?(1\d{9})$/', $value, $matches)) {
+                // Egyptian number: Must be exactly 10 digits after +20 or start with 01
+                $value = '0' . $matches[1]; // Ensure format: 01XXXXXXXXX
+                $type = 'phone';
+            } elseif (preg_match('/^(?:966)?(5\d{8})$/', $value, $matches)) {
+                // Saudi number: Must be exactly 9 digits after +966 or start with 05
+                $value = '0' . $matches[1]; // Ensure format: 05XXXXXXXX
+                $type = 'phone';
+            } elseif (preg_match('/^01\d{9}$/', $value)) {
+                // Direct Egyptian number (without country code)
+                $type = 'phone';
+            } elseif (preg_match('/^05\d{8}$/', $value)) {
+                // Direct Saudi number (without country code)
                 $type = 'phone';
             } else {
-                $fail('It must be a valid phone number!');
+                $fail('It must be a valid Egyptian or Saudi phone number!');
                 $passed = false;
             }
         }
 
-        if($passed) {
-            if($type == 'email') {
-                $company = Company::where('email', $value)->first();
-                $user    = User::where('email', $value)->first();
-        
-                if(!$user && !$company) {
-                    $fail('This email does not Exist !');
+        if ($passed) {
+            if ($type == 'email') {
+                $company = Company::where('email', $originalValue)->first();
+                $user    = User::where('email', $originalValue)->first();
+
+                if (!$user && !$company) {
+                    $fail('This email does not exist!');
                 }
-            }
-            elseif ($type == 'phone') {
+            } elseif ($type == 'phone') {
                 $company = Company::where('phone_number', $value)->first();
                 $user    = User::where('phone_number', $value)->first();
-        
-                if(!$user && !$company) {
-                    $fail('This Phone number does not Exist !');
+
+                if (!$user && !$company) {
+                    $fail('This phone number does not exist!');
                 }
             }
         }
     }
+
+
 }
