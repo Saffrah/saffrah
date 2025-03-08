@@ -1,5 +1,5 @@
 @component('mail::message')
-# Your OTP for Password Reset
+# Resetting request
 
 Your OTP is **{{ $data }}**.
 
