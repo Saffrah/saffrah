@@ -30,7 +30,7 @@ class AuthRegisterRequest extends RequestValidatorResponse
             'user_type'         => 'required|string|in:user,company',
             'commercial_number' => 'required_if:user_type,company',
             'tax_number'        => 'required_if:user_type,company',
-            'phone_number'      => ['required', 'string', 'min:10', new PhoneNumberUniqueRule],
+            'phone_number'      => ['required', 'string', 'min:10', 'unique:users,phone_number'],
             'password'          => ['required', 'confirmed', Password::min(8)->numbers()->letters()->mixedCase()->symbols()] 
         ];
     }

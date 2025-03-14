@@ -44,28 +44,6 @@ class EmailOrPhoneRule implements DataAwareRule, ValidationRule
             $type = 'email';
             $fail('It must be a valid email!');
             $passed = false;
-        } elseif (is_numeric($value)) {
-            // Remove non-digit characters (e.g., "+", "-")
-            $value = preg_replace('/\D/', '', $value);
-
-            if (preg_match('/^(?:20)?(1\d{9})$/', $value, $matches)) {
-                // Egyptian number: Must be exactly 10 digits after +20 or start with 01
-                $value = '0' . $matches[1]; // Ensure format: 01XXXXXXXXX
-                $type = 'phone';
-            } elseif (preg_match('/^(?:966)?(5\d{8})$/', $value, $matches)) {
-                // Saudi number: Must be exactly 9 digits after +966 or start with 05
-                $value = '0' . $matches[1]; // Ensure format: 05XXXXXXXX
-                $type = 'phone';
-            } elseif (preg_match('/^01\d{9}$/', $value)) {
-                // Direct Egyptian number (without country code)
-                $type = 'phone';
-            } elseif (preg_match('/^05\d{8}$/', $value)) {
-                // Direct Saudi number (without country code)
-                $type = 'phone';
-            } else {
-                $fail('It must be a valid Egyptian or Saudi phone number!');
-                $passed = false;
-            }
         }
 
         if ($passed) {

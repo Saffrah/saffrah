@@ -36,18 +36,6 @@ class AuthService
 
     public function register($request) 
     {
-        // Remove non-digit characters (e.g., "+", "-")
-        $phone_number = preg_replace('/\D/', '', $request['phone_number']);
-        if (preg_match('/^(?:20)?(1\d{9})$/', $phone_number, $matches)) {
-            // Egyptian number: Must be exactly 10 digits after +20 or start with 01
-            $phone_number = '0' . $matches[1]; // Ensure format: 01XXXXXXXXX
-        } elseif (preg_match('/^(?:966)?(5\d{8})$/', $phone_number, $matches)) {
-            // Saudi number: Must be exactly 9 digits after +966 or start with 05
-            $phone_number = '0' . $matches[1]; // Ensure format: 05XXXXXXXX
-        }
-
-        $request['phone_number'] = $phone_number;
-    
         if($request['user_type'] == 'user') {
             $result = $this->auth_repository->register($request);
             $result['token']    = $result->createToken('User', ['role:user'])->plainTextToken; 
@@ -109,18 +97,6 @@ class AuthService
 
     function login($request) 
     {
-        if (is_numeric($request['email'])) {
-            // Remove non-digit characters (e.g., "+", "-")
-            $request['email'] = preg_replace('/\D/', '', $request['email']);
-            if (preg_match('/^(?:20)?(1\d{9})$/', $request['email'], $matches)) {
-                // Egyptian number: Must be exactly 10 digits after +20 or start with 01
-                $request['email'] = '0' . $matches[1]; // Ensure format: 01XXXXXXXXX
-            } elseif (preg_match('/^(?:966)?(5\d{8})$/', $request['email'], $matches)) {
-                // Saudi number: Must be exactly 9 digits after +966 or start with 05
-                $request['email'] = '0' . $matches[1]; // Ensure format: 05XXXXXXXX
-            }
-        }
-
         $user = User::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
 
         if($user) { 
