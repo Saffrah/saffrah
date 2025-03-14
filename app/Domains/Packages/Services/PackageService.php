@@ -215,7 +215,11 @@ class PackageService
         $results = $this->package_repository->confirm($request);
         
         if($results) {
-            Mail::to($user->email)->send(new PackageConfirmation($results));
+            try {
+                Mail::to($user->email)->send(new PackageConfirmation($results));
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
             return [
                 'response_code'    => 200,
                 'response_message' => 'Packages Confirmed successfully !', 

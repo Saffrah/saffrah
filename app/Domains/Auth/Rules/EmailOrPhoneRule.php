@@ -38,36 +38,32 @@ class EmailOrPhoneRule implements DataAwareRule, ValidationRule
     {
         $type   = '';
         $passed = true;
+        $originalValue = $value; // Store original for database lookup
 
-        if (! filter_var($value, FILTER_VALIDATE_EMAIL) && ! is_numeric($value)) {
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL) && !is_numeric($value)) {
             $type = 'email';
-            $fail('it must be a valid email !');
+            $fail('It must be a valid email!');
             $passed = false;
         }
 
-        if(is_numeric($value) && ! preg_match('/^\d{11}$/', $value)) {
-            $type = 'phone';
-            $fail('it must be a valid Phone number !');
-            $passed = false;
-        }
+        if ($passed) {
+            if ($type == 'email') {
+                $company = Company::where('email', $originalValue)->first();
+                $user    = User::where('email', $originalValue)->first();
 
-        if($passed) {
-            if($type == 'email') {
-                $company = Company::where('email', $value)->first();
-                $user    = User::where('email', $value)->first();
-        
-                if(!$user && !$company) {
-                    $fail('This email does not Exist !');
+                if (!$user && !$company) {
+                    $fail('This email does not exist!');
                 }
-            }
-            elseif ($type == 'phone') {
+            } elseif ($type == 'phone') {
                 $company = Company::where('phone_number', $value)->first();
                 $user    = User::where('phone_number', $value)->first();
-        
-                if(!$user && !$company) {
-                    $fail('This Phone number does not Exist !');
+
+                if (!$user && !$company) {
+                    $fail('This phone number does not exist!');
                 }
             }
         }
     }
+
+
 }

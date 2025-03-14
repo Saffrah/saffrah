@@ -1,4 +1,4 @@
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 bg-slate-900 fixed-start" id="sidenav-main">
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 bg-slate-900 {{ app()->getLocale() == 'ar' ? 'fixed-end rotate-caret' : 'fixed-start' }} " id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand d-flex align-items-center m-0" href="#">
@@ -21,7 +21,7 @@
                         </g>
                     </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Dashboard</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.dashboard') }}</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -38,7 +38,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Companies</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.companies') }}</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -55,7 +55,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Packages</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.packages') }}</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -72,7 +72,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Requests</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.requests') }}</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -89,7 +89,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Confirmed Deals</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.confirmed_deals') }}</span>
                 </a>
             </li>
             @if (Auth::guard('admin')->user()->role === 'super_admin')
@@ -107,7 +107,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Admins</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.admins') }}</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -124,10 +124,18 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Messages</span>
+                    <span class="nav-link-text ms-1">{{ __('dashboard.messages') }}</span>
                 </a>
             </li>
             @endif
         </ul>
+    </div>
+    <div style="width: 100%;text-align: center;position: relative;bottom: -150px">
+        <form action="{{ url('lang/' . (app()->getLocale() == 'en' ? 'ar' : 'en')) }}" method="GET" class="language-switch-form">
+            <label class="switch">
+                <input type="checkbox" onchange="this.form.submit()" {{ app()->getLocale() == 'ar' ? 'checked' : '' }}>
+                <span class="slider round"></span>
+            </label>
+        </form>
     </div>
 </aside>

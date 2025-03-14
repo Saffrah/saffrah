@@ -129,9 +129,9 @@ class AuthService
 
     public function forgot_password($request) 
     {
-        $user = User::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
+        $user = User::where('email', $request['email'])->first();
         if(!$user)
-            $user = Company::where('email', $request['email'])->orWhere('phone_number', $request['email'])->first();
+            $user = Company::where('email', $request['email'])->first();
         
         if(isset($request['password'])) 
         {

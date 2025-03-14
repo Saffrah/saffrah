@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,10 +22,92 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <style>
+            /* Style the switch */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 85px;
+                height: 35px;
+            }
+
+            /* Hide the default checkbox */
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            /* Create the slider */
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: 0.4s;
+                border-radius: 34px;
+            }
+
+            /* The circle inside the slider */
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                border-radius: 50%;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: 0.4s;
+            }
+
+            /* When checked, change the background and move the circle */
+            input:checked + .slider {
+                background-color: #4CAF50;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(45px);
+            }
+
+            /* Rounded corners for the slider */
+            .slider.round {
+                border-radius: 34px;
+            }
+
+            /* When the switch is checked, change the language text */
+            input:checked + .slider:after {
+                margin-right: 35px;
+                content: 'عربي';
+                position: absolute;
+                top: 50%;
+                right: 10px; /* Move text to the right side */
+                transform: translateY(-50%);
+                font-size: 12px;
+                color: white;
+            }
+
+            /* Display English text when the switch is not checked */
+            input:not(:checked) + .slider:after {
+                margin-left: 22px;
+                content: 'English';
+                position: absolute;
+                top: 50%;
+                left: 10px; /* Move text to the left side */
+                transform: translateY(-50%);
+                font-size: 12px;
+                color: white;
+            }
+
+        </style>
+
         @yield('CSS')
 
     </head>
-    <body class="g-sidenav-show  bg-gray-100">
+    <body class="g-sidenav-show {{ app()->getLocale() == 'ar' ? 'rtl' : '' }} bg-gray-100">
         @include('layouts.sidebar')
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
             
